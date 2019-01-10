@@ -11,6 +11,8 @@
  roslaunch srdf demo.launch 
  </pre></code>
  
+<img src="./img/srdf1.png"  class="center">
+<img src="./img/srdf2.png"  class="center">
  
 2.  Run the realsense cameras(camera1(D415): world camera, camera2(D435)" End-effector) 
 Note: Connecttion of USB 3.0
