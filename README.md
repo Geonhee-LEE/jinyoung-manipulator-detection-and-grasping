@@ -1,12 +1,26 @@
 # Requirement
 
+'''
+Ubuntu 16.04
 
+ROS Kinetic
+
+MoveIt!
+
+Realsense
+
+OpenCV
+
+![Qt](https://ros-qtc-plugin.readthedocs.io/en/latest/)
+
+'''
 
 -------------
 
 # How to run the functions of 'manipulator'
 
 1.  Run the moveIt! and RViz
+
  <pre><code>
  roslaunch srdf demo.launch 
  </pre></code>
@@ -15,6 +29,7 @@
 <img src="./img/srdf2.png"  class="center">
  
 2.  Run the realsense cameras(camera1(D415): world camera, camera2(D435)" End-effector) 
+
 Note: Connecttion of USB 3.0
 
  <pre><code>
@@ -26,6 +41,7 @@ roslaunch realsense2_camera rs_multiple_devices.launch serial_no_camera1:=732612
  
  
 3.  Run Qt GUI for controlling the manipulator
+
  <pre><code>
  rosrun qtros qtros
  </pre></code>
@@ -33,6 +49,7 @@ roslaunch realsense2_camera rs_multiple_devices.launch serial_no_camera1:=732612
 <img src="./img/qtros_default.png"  class="center">
  
 4.  Run image process using OpenCV 
+
  <pre><code>
  rosrun camera_node camera_node
  </pre></code>
