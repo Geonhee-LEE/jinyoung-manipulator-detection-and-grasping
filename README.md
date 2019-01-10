@@ -24,8 +24,12 @@
  roslaunch srdf demo.launch 
  </pre></code>
  
-<img src="./img/srdf1.png"  class="center">
-<img src="./img/srdf2.png"  class="center">
+ 
+<p align="center">
+    <img src="./img/srdf1.png" width="640" height="480" >
+    <img src="./img/srdf2.png"  width="640" height="480" >
+</p>
+
  
 2.  Run the realsense cameras(camera1(D415): world camera, camera2(D435)" End-effector) 
 
@@ -36,7 +40,9 @@ roslaunch realsense2_camera rs_multiple_devices.launch serial_no_camera1:=732612
  </pre></code>
  
  
-<img src="./img/realsense1.png"  class="center">
+<p align="center">
+    <img src="./img/realsense1.png" width="640" height="480" >
+</p>
  
  
 3.  Run Qt GUI for controlling the manipulator
@@ -45,7 +51,11 @@ roslaunch realsense2_camera rs_multiple_devices.launch serial_no_camera1:=732612
  rosrun qtros qtros
  </pre></code>
  
-<img src="./img/qtros_default.png"  class="center">
+ 
+<p align="center">
+    <img src="./img/qtros_default.png" width="640" height="480" >
+</p>
+ 
  
 4.  Run image process using OpenCV 
 
@@ -54,5 +64,8 @@ roslaunch realsense2_camera rs_multiple_devices.launch serial_no_camera1:=732612
  </pre></code>
  
  
-<img src="./img/camera_node_default.png"  class="center">
+<p align="center">
+    <img src="./img/camera_node_default.png" width="640" height="480" >
+</p>
+ 
  
