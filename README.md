@@ -1,19 +1,18 @@
 # Requirement
 
-```
-Ubuntu 16.04
+1. Ubuntu 16.04
 
-ROS Kinetic
+2. ROS Kinetic
 
-MoveIt!
+3. MoveIt!
 
-Realsense
+4. Realsense ROS Package
 
-OpenCV
+5. OpenCV ROS Package
 
-[Qt](https://ros-qtc-plugin.readthedocs.io/en/latest/)
+6. [Qt](https://ros-qtc-plugin.readthedocs.io/en/latest/)
 
-```
+
 
 -------------
 
