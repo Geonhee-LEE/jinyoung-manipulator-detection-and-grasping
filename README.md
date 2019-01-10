@@ -78,9 +78,40 @@ roslaunch realsense2_camera rs_multiple_devices.launch serial_no_camera1:=732612
 </p>
  
 - ROS Master
-    -conect
+    - ROS MasterUrl: ROS MasterUrl
+    - ROS IP: ROS IP
+    - **Connect** : To connect for ROS Master with Qt GUI
     
 - TCP/IP
     - ServerIP: IP of EC-Master
-    - Port: Port of EC-Master
+    - Port: Port of EC-Master(Default)
+    - **Connect** : To connect for EC Master with Qt GUI
  
+-  ForwardJoint_value: Get the joint angles in RViz.
+
+-  EndPointJoint_value: Get the 3D position such as x, y, z and angle such as roll, pitch, yaw in RViz.
+
+-  EndToCamera: Move the manitulator to the desired position through inverse kinematics in RViz. 
+
+
+<p align="center">
+    <img src="./img/qtros_setting.png" width="640" height="480" >
+</p>
+
+
+-  Set_JointValue: Set the joint angles for moving according to absolute joint angles .
+
+-  Get_JointValue: Get the joint angles from real manipulator.
+
+-  Robot_Server: 
+    - SRV_ON: Servo motor on
+    - SRV_OFF: Servo motor off
+    - Position_Set: init position setting
+    - Free_Set:   Direct teaching
+    
+-  Robot_Pose: 
+    - Home: Move to the home.
+    - Pose_set: Move to the designated position 
+    - PixelPoint: Track the object using image processing
+    - Gripper On/OFF:   Gripper On/OFF
+    
