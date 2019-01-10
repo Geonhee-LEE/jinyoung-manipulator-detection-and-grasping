@@ -33,7 +33,7 @@
  
 2.  Run the realsense cameras(camera1(D415): world camera, camera2(D435)" End-effector) 
 
-Note: Connecttion of USB 3.0
+Note: Connect the camera to the USB 3.0
 
  <pre><code>
 roslaunch realsense2_camera rs_multiple_devices.launch serial_no_camera1:=732612061000 serial_no_camera2:=819312073026
@@ -68,4 +68,19 @@ roslaunch realsense2_camera rs_multiple_devices.launch serial_no_camera1:=732612
     <img src="./img/camera_node_default.png" width="640" height="480" >
 </p>
  
+ 
+ To be more specific, the functions of qtros node is like below:
+ 
+ 
+ 
+<p align="center">
+    <img src="./img/qtros_default.png" width="640" height="480" >
+</p>
+ 
+- ROS Master
+    -conect
+    
+- TCP/IP
+    - ServerIP: IP of EC-Master
+    - Port: Port of EC-Master
  
