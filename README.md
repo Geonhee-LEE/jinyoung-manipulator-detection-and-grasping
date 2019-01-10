@@ -28,6 +28,6 @@ roslaunch realsense2_camera rs_multiple_devices.launch serial_no_camera1:=732612
  
 4.  Run image process using OpenCV 
  <pre><code>
- rosrun camera_node cameranode
+ rosrun camera_node camera_node
  </pre></code>
  
