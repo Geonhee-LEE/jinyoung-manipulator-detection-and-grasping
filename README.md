@@ -10,7 +10,7 @@
 
 5. OpenCV ROS Package
 
-6. [Qt](https://ros-qtc-plugin.readthedocs.io/en/latest/)
+6. [ROS Qt Creator](https://ros-qtc-plugin.readthedocs.io/en/latest/)
 
 
 
