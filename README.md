@@ -22,14 +22,21 @@ roslaunch realsense2_camera rs_multiple_devices.launch serial_no_camera1:=732612
  </pre></code>
  
  
+<img src="./img/realsense1.png"  class="center">
+ 
+ 
 3.  Run Qt GUI for controlling the manipulator
  <pre><code>
  rosrun qtros qtros
  </pre></code>
  
+<img src="./img/qtros_default.png"  class="center">
  
 4.  Run image process using OpenCV 
  <pre><code>
  rosrun camera_node camera_node
  </pre></code>
+ 
+ 
+<img src="./img/camera_node_default.png"  class="center">
  
