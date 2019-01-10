@@ -1,0 +1,275 @@
+<robot name="mr5_v2">
+ <property name = "pi" value = "3.14159265"/>
+  <material name ="black">
+    <color rgba = "0.0 0.0 0.0 0.7"/>
+  </material>
+    <material name ="write">
+    <color rgba = "1.0 1.0 1.0 0.7"/>
+  </material>
+
+ <link name="base">
+    <visual>
+      <geometry>
+        <mesh filename="package://mr5_v2/urdf/meshes/25BASEPAN.stl"/>
+      </geometry>
+      <origin xyz="0 0 15" rpy="0 0 0"/>
+      <material name ="write"/> 
+    </visual>
+  <collision>
+      <geometry>
+        <mesh filename="package://mr5_v2/urdf/meshes/25BASEPAN.stl"/>
+      </geometry>
+  </collision>
+  </link>
+
+ <link name="mr25_1">
+    <visual>
+      <geometry>
+        <mesh filename="package://mr5_v2/urdf/meshes/25_ASM.stl"/>
+      </geometry>
+      <!--origin xyz="0 -61.835 43.5" rpy="0 0 0"/-->
+      <origin xyz="61.831 0 -15.28" rpy="0 1.57 1.57"/>
+      <material name ="black"/>
+    </visual>
+  <collision>
+      <geometry>
+        <mesh filename="package://mr5_v2/urdf/meshes/25_ASM.stl"/>
+      </geometry>
+  </collision>
+  </link>
+  
+  <joint name="joint1" type="revolute">
+    <parent link="base"/>
+    <child link="mr25_1"/>
+    <origin xyz="0 0 87" rpy="0 0 0" />
+    <axis xyz="0 0 1"/>
+    <limit effort="30" lower="-3.14" upper="3.14" velocity="1.517"/>
+  </joint> 
+
+  <link name="mr25_2">
+    <visual>
+      <geometry>
+        <!--box size="10 10 151.88"/-->
+        <mesh filename="package://mr5_v2/urdf/meshes/25_ASM.stl"/>
+      </geometry>
+      <origin xyz="61.831 0 -15.28" rpy="-1.57 1.57 0"/>
+      <material name ="write"/>
+    </visual>
+  <collision>
+      <geometry>
+        <mesh filename="package://mr5_v2/urdf/meshes/25_ASM.stl"/>
+      </geometry>
+  </collision>
+  </link>
+
+  <joint name="joint2" type="revolute">
+    <parent link="mr25_1"/>
+    <child link="mr25_2"/>
+    <!--origin xyz="-87 0 -151.88" rpy="1.57 -1.57 1.57" /-->
+     <origin xyz="151.88 0 0" rpy="0 -1.57 3.14"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="30" lower="-3.14" upper="3.14" velocity="1.517"/>
+  </joint>
+
+ <link name="link1">
+    <visual>
+      <geometry>
+        <!--box size="383.88 10 10 "/-->
+        <mesh filename="package://mr5_v2/urdf/meshes/25to20.stl"/>
+      </geometry>
+      <origin xyz="157.935 0 0" rpy="0 0 -1.57"/>
+      <material name ="black"/>
+    </visual>
+  <collision>
+      <geometry>
+        <mesh filename="package://mr5_v2/urdf/meshes/25to20.stl"/>
+      </geometry>
+  </collision>
+  </link>
+
+  <joint name="fix_1" type="revolute">
+    <parent link="mr25_2"/>
+    <child link="link1"/>
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <axis xyz="0 0 1"/>
+    <limit effort="0" lower="0" upper="0" velocity="0"/>
+  </joint>
+
+  <link name="mr20">
+    <visual>
+      <geometry>
+        <!--box size="10 10 -120.5 "/-->
+        <mesh filename="package://mr5_v2/urdf/meshes/20_ASM.stl"/>
+      </geometry>
+      <origin xyz="0 0 55.5" rpy="3.14 0 1.57"/>
+      <material name ="write"/>
+    </visual>
+  <collision>
+      <geometry>
+        <mesh filename="package://mr5_v2/urdf/meshes/20_ASM.stl"/>
+      </geometry>
+  </collision>
+  </link>
+
+  <joint name="fix_2" type="revolute">
+    <parent link="link1"/>
+    <child link="mr20"/>
+    <origin xyz="383.88 0 0" rpy="0 0 0" />
+    <axis xyz="0 0 1"/>
+    <limit effort="0" lower="0" upper="0" velocity="0"/>
+  </joint> 
+
+    <link name="link2_1">
+    <visual>
+      <geometry>
+        <!--box size="376.5 10 10 "/-->
+        <mesh filename="package://mr5_v2/urdf/meshes/link_elbow.stl"/>
+      </geometry>
+      <origin xyz="-54.1 0 0" rpy="-1.57 0 -1.57"/>
+      <material name ="black"/>
+    </visual>
+  <collision>
+      <geometry>
+        <mesh filename="package://mr5_v2/urdf/meshes/link_elbow.stl"/>
+      </geometry>
+  </collision>
+  </link>
+
+  <joint name="joint3" type="revolute">
+    <parent link="mr20"/>
+    <child link="link2_1"/>
+    <origin xyz="0 0 -120.5" rpy="0 0 0" />
+    <axis xyz="0 0 1"/>
+    <limit effort="30" lower="-3.14" upper="3.14" velocity="1.517"/>
+  </joint>
+
+  <link name="link2_2">
+    <visual>
+      <geometry>
+        <!--box size="10 10 99.5 "/-->
+        <mesh filename="package://mr5_v2/urdf/meshes/20to14.stl"/>
+      </geometry>
+      <!--origin xyz="-354 0 -120.5" rpy="0 0 -1.57"/-->
+      <origin xyz="22.5 0 0" rpy="0 0 -1.57"/>
+      <material name ="write"/>
+    </visual>
+  <collision>
+      <geometry>
+        <mesh filename="package://mr5_v2/urdf/meshes/20to14.stl"/>
+      </geometry>
+  </collision>
+  </link>
+
+  <joint name="fix_3" type="revolute">
+    <parent link="link2_1"/>
+    <child link="link2_2"/>
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <axis xyz="0 0 1"/>
+    <limit effort="0" lower="0" upper="0" velocity="0"/>
+  </joint>
+
+   <link name="mr14_1">
+    <visual>
+      <geometry>
+        <!--box size="10 10 100.25"/-->
+        <mesh filename="package://mr5_v2/urdf/meshes/14Series.stl"/>
+      </geometry>
+      <origin xyz="0 0 -64" rpy="3.14 0 -1.57"/>
+      <material name ="black"/>
+    </visual>
+  <collision>
+      <geometry>
+         <mesh filename="package://mr5_v2/urdf/meshes/14Series.stl"/>
+      </geometry>
+  </collision>
+  </link>
+
+  <joint name="fix_4" type="revolute">
+    <parent link="link2_2"/>
+    <child link="mr14_1"/>
+   <origin xyz="376.5 0 0" rpy="3.14 0 0" />
+    <axis xyz="0 0 1"/>
+    <limit effort="0" lower="0" upper="0" velocity="0"/>
+  </joint>
+
+ <link name="mr14_2">
+    <visual>
+      <geometry>
+        <!--box size="10 10 53.25"/-->
+        <mesh filename="package://mr5_v2/urdf/meshes/14Series.stl"/>
+      </geometry>
+      <origin xyz="0 0 -64.75" rpy="0 3.14 0"/>
+      <material name ="write"/>
+    </visual>
+  <collision>
+      <geometry>
+         <mesh filename="package://mr5_v2/urdf/meshes/14Series.stl"/>
+      </geometry>
+  </collision>
+  </link>
+
+    <joint name="joint4" type="revolute">
+    <parent link="mr14_1"/>
+    <child link="mr14_2"/>
+    <origin xyz="0 0 -99.5" rpy="1.57 0 -1.57" />
+    <axis xyz="0 1 0"/>
+    <limit effort="30" lower="-3.14" upper="3.14" velocity="1.517"/>
+  </joint> 
+
+  <link name="mr14_3">
+    <visual>
+      <geometry>
+        <!--box size="10 10 53.25"/-->
+        <mesh filename="package://mr5_v2/urdf/meshes/14Series.stl"/>
+      </geometry>
+      <origin xyz="0 0 -64.75" rpy="3.14 0 -1.57"/>
+      <material name ="write"/>
+    </visual>
+      <collision>
+      <geometry>
+         <mesh filename="package://mr5_v2/urdf/meshes/14Series.stl"/>
+      </geometry>
+  </collision>
+  </link>
+
+  <joint name="joint5" type="revolute">
+    <parent link="mr14_2"/>
+    <child link="mr14_3"/>
+    <origin xyz="0 0 -100.25" rpy="-1.57 1.57 0" />
+    <axis xyz="1 0 0"/>
+    <limit effort="30" lower="-3.14" upper="3.14" velocity="1.517"/>
+  </joint> 
+  
+
+<link name="endpoint">
+  <visual>
+    <geometry>
+      <box size="10 10 10"/>
+      <!--mesh filename="package://mr5_v2/urdf/meshes/mr14tocamera.stl"/-->
+    </geometry>
+    <!--origin xyz="0 0 -58.25" rpy="1.57 0 0"/-->
+    <origin xyz="0 0 0" rpy="-1.57 0 1.57"/>
+    <material name ="black"/>
+  </visual>
+    <collision>
+    <geometry>
+       <box size="10 10 10"/>
+       <!--mesh filename="package://mr5_v2/urdf/meshes/mr14tocamera.stl"/-->
+    </geometry>
+</collision>
+</link>
+
+
+<joint name="joint6" type="revolute">
+  <parent link="mr14_3"/>
+  <child link="endpoint"/>
+  <origin xyz="0 0 -53.25" rpy="3.14 0 -1.57"/>
+  <axis xyz="0 0 1"/>
+  <limit effort="30" lower="-3.14" upper="3.14" velocity="1.517"/>
+</joint>
+
+
+
+</robot>
+
+

@@ -1,0 +1,35 @@
+digraph G {
+node [shape=box];
+"base" [label="base"];
+"mr25_1" [label="mr25_1"];
+"mr25_2" [label="mr25_2"];
+"link1" [label="link1"];
+"mr20" [label="mr20"];
+"link2_1" [label="link2_1"];
+"link2_2" [label="link2_2"];
+"mr14_1" [label="mr14_1"];
+"mr14_2" [label="mr14_2"];
+"mr14_3" [label="mr14_3"];
+"endpoint" [label="endpoint"];
+node [shape=ellipse, color=blue, fontcolor=blue];
+"base" -> "joint1" [label="xyz: 0 0 87 \nrpy: 0 -0 0"]
+"joint1" -> "mr25_1"
+"mr25_1" -> "joint2" [label="xyz: 151.88 0 0 \nrpy: 0 -1.5708 3.14"]
+"joint2" -> "mr25_2"
+"mr25_2" -> "fix_1" [label="xyz: 0 0 0 \nrpy: 0 -0 0"]
+"fix_1" -> "link1"
+"link1" -> "fix_2" [label="xyz: 383.88 0 0 \nrpy: 0 -0 0"]
+"fix_2" -> "mr20"
+"mr20" -> "joint3" [label="xyz: 0 0 -120.5 \nrpy: 0 -0 0"]
+"joint3" -> "link2_1"
+"link2_1" -> "fix_3" [label="xyz: 0 0 0 \nrpy: 0 -0 0"]
+"fix_3" -> "link2_2"
+"link2_2" -> "fix_4" [label="xyz: 376.5 0 0 \nrpy: 3.14 -0 0"]
+"fix_4" -> "mr14_1"
+"mr14_1" -> "joint4" [label="xyz: 0 0 -99.5 \nrpy: 1.57 5.55112e-17 -1.57"]
+"joint4" -> "mr14_2"
+"mr14_2" -> "joint5" [label="xyz: 0 0 -100.25 \nrpy: 0 1.5708 1.5708"]
+"joint5" -> "mr14_3"
+"mr14_3" -> "joint6" [label="xyz: 0 0 -53.25 \nrpy: 3.14 -2.1684e-19 -1.57"]
+"joint6" -> "endpoint"
+}

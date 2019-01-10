@@ -1,0 +1,14 @@
+controller_list:
+  - name: fake_arm_controller
+    joints:
+      - joint1
+      - joint2
+      - fix_1
+      - fix_2
+      - joint3
+      - fix_3
+      - fix_4
+      - joint4
+      - joint5
+      - joint6
+      - fix_5

@@ -1,0 +1,11 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: mr5_v2
+    relative_path: urdf/mr5_v2.urdf
+    xacro_args: "--inorder "
+  SRDF:
+    relative_path: config/mr5_v2.srdf
+  CONFIG:
+    author_name: changhee-jung
+    author_email: 17510049@seoultech.ac.kr
+    generated_timestamp: 1542260850
