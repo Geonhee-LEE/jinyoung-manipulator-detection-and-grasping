@@ -1,4 +1,4 @@
-# Requirement
+# Requirements
 
 1. Ubuntu 16.04
 
@@ -69,9 +69,17 @@ roslaunch realsense2_camera rs_multiple_devices.launch serial_no_camera1:=732612
 </p>
  
  
+ 
+
+
+-------------
+
+# qtros GUI guide
+
  To be more specific, the functions of qtros node is like below:
  
  
+## Control tab
  
 <p align="center">
     <img src="./img/qtros_default.png" width="640" height="480" >
@@ -93,6 +101,7 @@ roslaunch realsense2_camera rs_multiple_devices.launch serial_no_camera1:=732612
 
 -  EndToCamera: Move the manitulator to the desired position through inverse kinematics in RViz. 
 
+## Setting tab
 
 <p align="center">
     <img src="./img/qtros_setting.png" width="640" height="480" >
@@ -115,3 +124,19 @@ roslaunch realsense2_camera rs_multiple_devices.launch serial_no_camera1:=732612
     - PixelPoint: Track the object using image processing
     - Gripper On/OFF:   Gripper On/OFF
     
+
+ 
+## Check tab
+
+It is designed for checking repeatability of manipulator. 
+
+
+-------------
+
+# camera node guide
+
+Drag the desired object area on image window with keeping left button of mouse.
+
+<p align="center">
+    <img src="./img/camera_node_init.png" width="640" height="480" >
+</p>
