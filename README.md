@@ -11,7 +11,7 @@ Realsense
 
 OpenCV
 
-![Qt](https://ros-qtc-plugin.readthedocs.io/en/latest/)
+[Qt](https://ros-qtc-plugin.readthedocs.io/en/latest/)
 
 '''
 
