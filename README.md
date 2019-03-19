@@ -17,7 +17,9 @@
 8. Additional libraries
 
  <pre><code>sudo apt-get install ros-kinetic-rviz-visual-tools 
-sudo apt-get install ros-kinetic-interactive-markers  </pre></code>
+sudo apt-get install ros-kinetic-interactive-markers  
+sudo apt-get install ros-kinetic-find-object-2d 
+sudo apt-get install ros-kinetic-qt-ros </pre></code>
 
 
 
