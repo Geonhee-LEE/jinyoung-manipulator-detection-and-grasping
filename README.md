@@ -10,7 +10,7 @@
 
 5. OpenCV ROS Package
 
-6. [Intel SDF](https://github.com/intel-ros/realsense)
+6. [Intel SDK](https://github.com/intel-ros/realsense)
 
 7. [ROS Qt Creator](https://ros-qtc-plugin.readthedocs.io/en/latest/)
 
