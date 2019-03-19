@@ -15,12 +15,11 @@
 7. [ROS Qt Creator](https://ros-qtc-plugin.readthedocs.io/en/latest/_source/How-to-Install-Users.html#qt-installer-procedure)
 
 8. Additional libraries
-'''
+
+```
 sudo apt-get install ros-kinetic-rviz-visual-tools 
-
 sudo apt-get install ros-kinetic-interactive-markers 
-
-'''
+```
 
 
 
