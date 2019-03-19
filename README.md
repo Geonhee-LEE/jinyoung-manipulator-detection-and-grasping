@@ -6,20 +6,14 @@
 
 3. MoveIt!
 
-5. OpenCV ROS Package
+4. OpenCV ROS Package
 
-6. [Intel SDK](https://github.com/intel-ros/realsense)
+5. [Intel® RealSense™ SDK](https://github.com/IntelRealSense/librealsense/blob/master/doc/distribution_linux.md)
 
- * https://github.com/IntelRealSense/librealsense/blob/master/doc/distribution_linux.md
+6. [Realsense ROS Package](https://github.com/intel-ros/realsense)
 
-4. [Realsense ROS Package](https://github.com/intel-ros/realsense)
+7. [ROS Qt Creator](https://ros-qtc-plugin.readthedocs.io/en/latest/_source/How-to-Install-Users.html#qt-installer-procedure)
 
- * https://github.com/intel-ros/realsense
- 
-
-7. [ROS Qt Creator](https://ros-qtc-plugin.readthedocs.io/en/latest/)
-
- * https://ros-qtc-plugin.readthedocs.io/en/latest/_source/How-to-Install-Users.html#qt-installer-procedure
 
 
 -------------
