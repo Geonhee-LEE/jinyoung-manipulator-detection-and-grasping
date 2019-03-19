@@ -16,10 +16,11 @@
 
 8. Additional libraries
 
-```
+ <pre><code>
 sudo apt-get install ros-kinetic-rviz-visual-tools 
+
 sudo apt-get install ros-kinetic-interactive-markers 
-```
+ </pre></code>
 
 
 
