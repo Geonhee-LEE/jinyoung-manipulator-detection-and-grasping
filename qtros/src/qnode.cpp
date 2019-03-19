@@ -15,8 +15,7 @@
 #include <string>
 #include <std_msgs/String.h>
 #include <sstream>
-#include "../include/qtros/qnode.hpp"
-#include "find_object_2d/ObjectsStamped.h"
+#include "qtros/qnode.hpp"
 #include <image_transport/image_transport.h>
 #include <opencv2/highgui/highgui.hpp>
 #include <cv_bridge/cv_bridge.h>
