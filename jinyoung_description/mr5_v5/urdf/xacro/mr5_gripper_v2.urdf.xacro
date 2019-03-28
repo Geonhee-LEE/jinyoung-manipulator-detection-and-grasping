@@ -1,0 +1,351 @@
+<?xml version="1.0" ?>
+ <robot name="mr5" xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <xacro:include filename="$(find mr5_v5)/urdf/xacro/common.xacro"/>
+
+  <property name="base_mass" value="4.7" />
+  <property name="shoulder_mass" value="4.7" />
+  <property name="link1" value="1" />
+  <property name="elbow" value="2.8" />
+  <property name="link2" value="1.6" />
+  <property name="wrist1" value="1.6" />
+  <property name="wrist2" value="1.6" />
+  <property name="wrist3" value="1.6" />
+  
+
+  <link name="world" />
+
+  <joint name="world_joint" type="fixed">
+    <parent link="world" />
+    <child link = "base_footprint" />
+    <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+  </joint>
+
+  <link name="base_footprint"/>
+
+  <joint name="base_joint" type="fixed">
+    <parent link="base_footprint"/>
+    <child link="base" />
+    <origin xyz="0 0 0.010" rpy="0 0 ${pi*0.5}"/>
+  </joint>
+
+  <link name="base">
+      <visual>
+        <geometry>
+          <mesh filename="package://mr5_v5/urdf/meshes/25BASEPAN.stl" scale="0.001 0.001 0.001"/>
+        </geometry>
+        <origin xyz="0 0 0.015" rpy="0 0 0"/>
+        <material name ="write"/> 
+      </visual>
+    <collision>
+        <geometry>
+          <mesh filename="package://mr5_v5/urdf/meshes/25BASEPAN.stl" scale="0.001 0.001 0.001"/>
+        </geometry>
+    </collision>    
+    
+    <xacro:cylinder_inertial length="0.75" radius="0.5" mass="${base_mass}">
+    </xacro:cylinder_inertial>
+  </link>
+
+    
+  <joint name="joint1" type="revolute">
+      <parent link="base"/>
+      <child link="mr25_1"/>
+      <origin xyz="0 0 0.087" rpy="0 0 0" />
+      <axis xyz="0 0 1"/>
+      <limit effort="30" lower="-3.14" upper="3.14" velocity="1.517"/>
+    </joint> 
+
+  <link name="mr25_1">
+      <visual>
+        <geometry>
+          <mesh filename="package://mr5_v5/urdf/meshes/25_ASM.stl"  scale="0.001 0.001 0.001"/>
+        </geometry>
+        <!--origin xyz="0 -61.835 43.5" rpy="0 0 0"/-->
+        <origin xyz="0.161831 0 -0.01528" rpy="0 1.57 1.57"/>
+        <material name ="black"/>
+      </visual>
+    <collision>
+        <geometry>
+          <mesh filename="package://mr5_v5/urdf/meshes/25_ASM.stl"  scale="0.001 0.001 0.001"/>
+        </geometry>
+    </collision>
+    <xacro:cylinder_inertial length="0.6" radius="0.2" mass="${shoulder_mass}">
+    </xacro:cylinder_inertial>
+  </link>
+
+    <joint name="joint2" type="revolute">
+      <parent link="mr25_1"/>
+      <child link="mr25_2"/>
+      <!--origin xyz="-87 0 -151.88" rpy="1.57 -1.57 1.57" /-->
+      <origin xyz="0.15188 0 0" rpy="0 -1.57 0"/> <!-- 0 -1.57 3.14-->
+      <axis xyz="0 0 1"/>
+      <limit effort="30" lower="-1.04" upper="1.04" velocity="1.517"/>
+    </joint>
+
+    <link name="mr25_2">
+      <visual>
+        <geometry>
+          <!--box size="10 10 151.88"/-->
+          <mesh filename="package://mr5_v5/urdf/meshes/25_ASM.stl"  scale="0.001 0.001 0.001"/>
+        </geometry>
+        <origin xyz="0.061831 0 -0.01528" rpy="-1.57 1.57 0"/>
+        <material name ="write"/>
+      </visual>
+    <collision>
+        <geometry>
+          <mesh filename="package://mr5_v5/urdf/meshes/25_ASM.stl"  scale="0.001 0.001 0.001"/>
+        </geometry>
+    </collision>
+    <xacro:cylinder_inertial length="0.6" radius="0.2" mass="${link1}">
+    </xacro:cylinder_inertial>
+    </link>
+
+    <joint name="fix_1" type="revolute">
+      <parent link="mr25_2"/>
+      <child link="link1"/>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <axis xyz="0 0 1"/>
+      <limit effort="0" lower="0" upper="0" velocity="0"/>
+    </joint>
+
+  <link name="link1">
+      <visual>
+        <geometry>
+          <!--box size="383.88 10 10 "/-->
+          <mesh filename="package://mr5_v5/urdf/meshes/25to20.stl"  scale="0.001 0.001 0.001"/>
+        </geometry>
+        <origin xyz="0.157935 0 0" rpy="0 0 -1.57"/>
+        <material name ="black"/>
+      </visual>
+    <collision>
+        <geometry>
+          <mesh filename="package://mr5_v5/urdf/meshes/25to20.stl"  scale="0.001 0.001 0.001"/>
+        </geometry>
+    </collision>
+    <xacro:cylinder_inertial length="0.6" radius="0.2" mass="${elbow}">
+    </xacro:cylinder_inertial>
+    </link>
+
+    <joint name="fix_2" type="revolute">
+      <parent link="link1"/>
+      <child link="mr20"/>
+      <origin xyz="0.38388 0 0" rpy="0 0 0" />
+      <axis xyz="0 0 1"/>
+      <limit effort="0" lower="0" upper="0" velocity="0"/>
+    </joint> 
+
+    <link name="mr20">
+      <visual>
+        <geometry>
+          <!--box size="10 10 -120.5 "/-->
+          <mesh filename="package://mr5_v5/urdf/meshes/20_ASM.stl"   scale="0.001 0.001 0.001"/>
+        </geometry>
+        <origin xyz="0 0 0.0555" rpy="3.14 0 1.57"/>
+        <material name ="write"/>
+      </visual>
+    <collision>
+        <geometry>
+          <mesh filename="package://mr5_v5/urdf/meshes/20_ASM.stl"   scale="0.001 0.001 0.001"/>
+        </geometry>
+    </collision>
+    <xacro:cylinder_inertial length="0.6" radius="0.2" mass="${link2}">
+    </xacro:cylinder_inertial>
+    </link>
+
+
+    <joint name="joint3" type="revolute">
+      <parent link="mr20"/>
+      <child link="link2_1"/>
+      <origin xyz="0 0 -0.1205" rpy="0 0 0" />
+      <axis xyz="0 0 1"/>
+      <limit effort="30" lower="-3.14" upper="0" velocity="1.517"/>
+    </joint>
+
+    <link name="link2_1">
+      <visual>
+        <geometry>
+          <!--box size="376.5 10 10 "/-->
+          <mesh filename="package://mr5_v5/urdf/meshes/link_elbow.stl"   scale="0.001 0.001 0.001"/>
+        </geometry>
+        <origin xyz="-0.054.1 0 0" rpy="-1.57 0 -1.57"/>
+        <material name ="black"/>
+      </visual>
+    <collision>
+        <geometry>
+          <mesh filename="package://mr5_v5/urdf/meshes/link_elbow.stl"   scale="0.001 0.001 0.001"/>
+        </geometry>
+    </collision>
+    <xacro:cylinder_inertial length="0.4" radius="0.2" mass="${wrist1}">
+    </xacro:cylinder_inertial>
+    </link>
+
+    <joint name="fix_3" type="revolute">
+      <parent link="link2_1"/>
+      <child link="link2_2"/>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <axis xyz="0 0 1"/>
+      <limit effort="0" lower="0" upper="0" velocity="0"/>
+    </joint>
+
+    <link name="link2_2">
+      <visual>
+        <geometry>
+          <!--box size="10 10 99.5 "/-->
+          <mesh filename="package://mr5_v5/urdf/meshes/20to14.stl"   scale="0.001 0.001 0.001"/>
+        </geometry>
+        <!--origin xyz="-354 0 -120.5" rpy="0 0 -1.57"/-->
+        <origin xyz="0.0225 0 0" rpy="0 0 -1.57"/>
+        <material name ="write"/>
+      </visual>
+    <collision>
+        <geometry>
+          <mesh filename="package://mr5_v5/urdf/meshes/20to14.stl"   scale="0.001 0.001 0.001"/>
+        </geometry>
+    </collision>
+    <xacro:cylinder_inertial length="0.6" radius="0.2" mass="${wrist2}">
+    </xacro:cylinder_inertial>
+    </link>
+
+    <joint name="fix_4" type="revolute">
+      <parent link="link2_2"/>
+      <child link="mr14_1"/>
+    <origin xyz="0.3765 0 0" rpy="0 0 0" /> <!--3.14 0 0-->
+      <axis xyz="0 0 1"/>
+      <limit effort="0" lower="0" upper="0" velocity="0"/>
+    </joint>
+
+    <link name="mr14_1">
+      <visual>
+        <geometry>
+          <!--box size="10 10 100.25"/-->
+          <mesh filename="package://mr5_v5/urdf/meshes/14Series.stl"  scale="0.001 0.001 0.001"/>
+        </geometry>
+        <origin xyz="0 0 -0.064" rpy="3.14 0 -1.57"/>
+        <material name ="black"/>
+      </visual>
+    <collision>
+        <geometry>
+          <mesh filename="package://mr5_v5/urdf/meshes/14Series.stl"  scale="0.001 0.001 0.001"/>
+        </geometry>
+    </collision>
+    <xacro:cylinder_inertial length="0.6" radius="0.2" mass="${wrist3}">
+    </xacro:cylinder_inertial>
+    </link>
+
+    <joint name="joint4" type="revolute">
+      <parent link="mr14_1"/>
+      <child link="mr14_2"/>
+      <origin xyz="0 0 -0.0995" rpy="1.57 0 -1.57" />
+      <axis xyz="0 1 0"/>
+      <limit effort="30" lower="0" upper="3.14" velocity="1.517"/>
+    </joint> 
+
+  <link name="mr14_2">
+      <visual>
+        <geometry>
+          <!--box size="10 10 53.25"/-->
+          <mesh filename="package://mr5_v5/urdf/meshes/14Series.stl"  scale="0.001 0.001 0.001"/>
+        </geometry>
+        <origin xyz="0 0 -0.06475" rpy="0 3.14 0"/> <!--0 3.14 0-->
+        <material name ="write"/>
+      </visual>
+    <collision>
+        <geometry>
+          <mesh filename="package://mr5_v5/urdf/meshes/14Series.stl"  scale="0.001 0.001 0.001"/>
+        </geometry>
+    </collision>
+    <xacro:cylinder_inertial length="0.6" radius="0.2" mass="1">
+    </xacro:cylinder_inertial>
+    </link>
+
+
+    <joint name="joint5" type="revolute">
+      <parent link="mr14_2"/>
+      <child link="mr14_3"/>
+      <!--origin xyz="0 0 -100.25" rpy="1.57 3.14 0" /-->
+      <origin xyz="0 0 -0.10025" rpy="-1.57 1.57 0" />
+      <axis xyz="1 0 0"/>
+      <limit effort="30" lower="-3.14" upper="3.14" velocity="1.517"/>
+    </joint> 
+    
+
+    <link name="mr14_3">
+      <visual>
+        <geometry>
+          <!--box size="10 10 53.25"/-->
+          <mesh filename="package://mr5_v5/urdf/meshes/14Series.stl"  scale="0.001 0.001 0.001"/>
+        </geometry>
+        <!--origin xyz="0 0 -64.75" rpy="0 3.14 3.14"/-->
+        <origin xyz="0 0 -0.064.75" rpy="0 0 -1.57"/> <!--3.14 0 -1.57 -->
+        <material name ="write"/>
+      </visual>
+        <collision>
+        <geometry>
+          <mesh filename="package://mr5_v5/urdf/meshes/14Series.stl"  scale="0.001 0.001 0.001"/>
+        </geometry>
+    </collision>
+    <xacro:cylinder_inertial length="0.6" radius="0.2" mass="1">
+    </xacro:cylinder_inertial>
+    </link>
+
+
+  <joint name="joint6" type="revolute">
+    <parent link="mr14_3"/>
+    <child link="mr14tocamera"/>
+    <!--origin xyz="0 0 -65.7" rpy="3.14 0 1.57"/-->
+    <origin xyz="0 0 -0.0657" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="30" lower="-3.14" upper="3.14" velocity="1.517"/>
+  </joint>
+
+
+  <link name="mr14tocamera">
+    <visual>
+      <geometry>
+        <mesh filename="package://mr5_v5/urdf/meshes/mr14tocamera.stl"  scale="0.001 0.001 0.001"/>
+      </geometry>
+      <!--origin xyz="0 0 -12.5" rpy="0 0 0"/-->
+      <origin xyz="0 0 0.0125" rpy="3.14 0 1.57"/> <!-- 3.14 0 1.57 -->
+      <material name ="black"/>
+    </visual>
+      <collision>
+      <geometry>
+        <mesh filename="package://mr5_v5/urdf/meshes/mr14tocamera.stl"  scale="0.001 0.001 0.001"/>
+      </geometry>
+  </collision>
+    <xacro:cylinder_inertial length="0.6" radius="0.2" mass="1">
+    </xacro:cylinder_inertial>
+  </link>
+
+  <joint name="fix_5" type="revolute">
+    <parent link="mr14tocamera"/>
+    <child link="gripper"/>
+  <origin xyz="0 0 -0.01851" rpy="0 0 0" />
+    <axis xyz="0 0 1"/>
+    <limit effort="0" lower="0" upper="0" velocity="0"/>
+  </joint>
+
+  <link name="gripper">
+    <visual>
+      <geometry>
+        <mesh filename="package://mr5_v5/urdf/meshes/parallel_assy_asm.stl"  scale="0.001 0.001 0.001"/>
+      </geometry>
+      <!--origin xyz="0 0 -128.8" rpy="-1.57 3.14 0"/-->
+      <origin xyz="0 0 128.8" rpy="-1.57 0 -1.57"/>
+      <material name ="write"/>
+    </visual>
+      <collision>
+      <geometry>
+        <mesh filename="package://mr5_v5/urdf/meshes/parallel_assy_asm.stl"  scale="0.001 0.001 0.001"/>
+      </geometry>
+  </collision>
+    <xacro:cylinder_inertial length="0.6" radius="0.2" mass="1">
+    </xacro:cylinder_inertial>
+  </link>
+
+
+</robot>
+
+
+

@@ -12,6 +12,16 @@
     <color rgba = "1.0 1.0 1.0 0.7"/>
   </material>
   <!-- #################### versions without origin #################### -->
+  <xacro:macro name="sphere_inertial_xyz" params="radius mass x y z">
+    <inertial>
+      <mass value="${mass}" />
+      <origin xyz="${x} ${y} ${z}" />
+      <inertia ixx="${0.4 * mass * radius * radius}" ixy="0.0" ixz="0.0"
+        iyy="${0.4 * mass * radius * radius}" iyz="0.0"
+        izz="${0.4 * mass * radius * radius}" />
+    </inertial>
+  </xacro:macro>
+
   <xacro:macro name="sphere_inertial" params="radius mass">
     <inertial>
       <mass value="${mass}" />
@@ -19,6 +29,16 @@
       <inertia ixx="${0.4 * mass * radius * radius}" ixy="0.0" ixz="0.0"
         iyy="${0.4 * mass * radius * radius}" iyz="0.0"
         izz="${0.4 * mass * radius * radius}" />
+    </inertial>
+  </xacro:macro>
+
+  <xacro:macro name="cylinder_inertial_xyz" params="radius length mass x y z">
+    <inertial>
+      <mass value="${mass}" />
+      <origin xyz="${x} ${y} ${z}" />
+      <inertia ixx="${0.0833333 * mass * (3 * radius * radius + length * length)}" ixy="0.0" ixz="0.0"
+        iyy="${0.0833333 * mass * (3 * radius * radius + length * length)}" iyz="0.0"
+        izz="${0.5 * mass * radius * radius}" />
     </inertial>
   </xacro:macro>
 

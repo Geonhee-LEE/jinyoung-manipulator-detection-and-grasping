@@ -1,7 +1,7 @@
 <launch>
   <arg name="x_pos" default="0.0"/>
   <arg name="y_pos" default="0.0"/>
-  <arg name="z_pos" default="10.0"/>
+  <arg name="z_pos" default="0.0"/>
 
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
     <arg name="world_name" value="$(find jinyoung_gazebo)/models/empty.world"/>
@@ -12,7 +12,7 @@
     <arg name="debug" value="false"/>
   </include>
 
-<param name="robot_description" command="$(find xacro)/xacro --inorder $(find mr5_v5)/urdf/xacro/mr5_gripper.urdf.xacro" />
+<param name="robot_description" command="$(find xacro)/xacro --inorder $(find mr5_v5)/urdf/xacro/mr5_gripper_v2.urdf.xacro" />
 
 
 
