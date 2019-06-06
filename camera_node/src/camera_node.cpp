@@ -59,6 +59,8 @@ void multi_publish()
 
 }
 
+
+//unused function
 void getObjectHistogram(cv::Mat &frame, cv::Rect object_region, cv::Mat &globalHistogram, cv::Mat &objectHistogram)
 {
   const int channels[] = { 0, 1 };
@@ -86,6 +88,7 @@ void getObjectHistogram(cv::Mat &frame, cv::Rect object_region, cv::Mat &globalH
 }
 
 
+//unused function
 void backProjection(const cv::Mat &frame, const cv::Mat &objectHistogram, cv::Mat &bp) {
   const int channels[] = { 0, 1 };
   float range[] = { 0, 256 };
@@ -95,18 +98,19 @@ void backProjection(const cv::Mat &frame, const cv::Mat &objectHistogram, cv::Ma
 
 
 
-void select_target(int event, int x, int y, int flags, void* userdata)
+void select_target(int event, int x, int y, int flags, void* userdata)//camshift
 {
   switch (event) {
-  case cv::EVENT_LBUTTONDOWN:
+  case cv::EVENT_LBUTTONDOWN: // left button push -> select
+
     mode = true;
     selectObject = false;
     origin = cv::Point2i(x,y);
-    selection.x = cv::min(x, origin.x);
-    selection.y = cv::min(y, origin.y);
+    selection.x = cv::min(x, origin.x);//
+    selection.y = cv::min(y, origin.y);//
 
     break;
-  case cv::EVENT_MOUSEMOVE:
+  case cv::EVENT_MOUSEMOVE: // mouse move -> draw rectangle
     if(mode)
     {
       cv::rectangle(image,origin,cv::Point(x,y),cv::Scalar(255,0,0),1);
@@ -114,7 +118,7 @@ void select_target(int event, int x, int y, int flags, void* userdata)
     }
 
     break;
-  case cv::EVENT_LBUTTONUP:
+  case cv::EVENT_LBUTTONUP: //Left button pull
     if(mode)
     {
       if(origin.x <= x || origin.y <= x)
@@ -123,7 +127,7 @@ void select_target(int event, int x, int y, int flags, void* userdata)
       selection.width = cv::abs(x-origin.x);
       selection.height = cv::abs(y-origin.y);
 
-      roi = image(selection);
+      roi = image(selection); // roi <- region of interest
       mode = false;
       selectObject = true;
       trackObject = -1;
@@ -137,6 +141,8 @@ void select_target(int event, int x, int y, int flags, void* userdata)
 
 
 }
+
+//unused function
 void plot_histogram(cv::Mat srcImage, int histSize, float valueRange[], const float*ranges[], int channels, int dims)
 {
     if (srcImage.empty())
@@ -164,44 +170,46 @@ void plot_histogram(cv::Mat srcImage, int histSize, float valueRange[], const fl
 
 
 
-void fixed_imageCallback(const sensor_msgs::ImageConstPtr& msg_image)
+void fixed_imageCallback(const sensor_msgs::ImageConstPtr& msg_image)//fixed camera
 {
   try
   {
     cv_bridge::CvImagePtr cv_prt;
     cv_prt = cv_bridge::toCvCopy(msg_image, sensor_msgs::image_encodings::RGB8);
 
-    cv::cvtColor(cv_prt->image,image,cv::COLOR_BGR2RGB);
+    cv::cvtColor(cv_prt->image,image,cv::COLOR_BGR2RGB);// bgr to rgb cv_prt -> image
     cv::Mat check_hsv, img_hsv, img_HSV;
-    cv::cvtColor(image,check_hsv,cv::COLOR_RGB2HSV);
-    cv::cvtColor(image,img_hsv,cv::COLOR_RGB2HSV);
-    cv::cvtColor(cv_prt->image,img_HSV,CV_BGR2HSV);
+    cv::cvtColor(image,check_hsv,cv::COLOR_RGB2HSV);// (image) RGB to (check_hsv) HSV
+    cv::cvtColor(image,img_hsv,cv::COLOR_RGB2HSV);// (image) RGB to (img_hsv) HSV
+    cv::cvtColor(cv_prt->image,img_HSV,CV_BGR2HSV);//(cv_prt) BGR to (img_HSV) HSV
 
     cv::Mat hsv[3];
-    cv::split(img_HSV,hsv);
+    cv::split(img_HSV,hsv); // HSV -> H, S, V
 //    cv::pyrMeanShiftFiltering(img_HSV, img_HSV, 30, 45, 3);
 
 
     // cam shift algorithm
 
     // target image detect
-     cv::setMouseCallback("image",select_target, 0);
-     if(selectObject)
+     cv::setMouseCallback("image",select_target, 0);//Region of interest find ,used mouse event
 
+     if(selectObject) // if find roi
      {
-       cv::cvtColor(roi,roi_hsv,cv::COLOR_RGB2HSV);
-       cv::cvtColor(image,image_hsv,cv::COLOR_RGB2HSV);
+       cv::cvtColor(roi,roi_hsv,cv::COLOR_RGB2HSV); // roi -> hsv
+       cv::cvtColor(image,image_hsv,cv::COLOR_RGB2HSV); // image -> hsv
 
        int _vmin = vmin, _vmax = vmax;
 
        cv::inRange(image_hsv, cv::Scalar(0, smin, MIN(_vmin,_vmax)),
-               cv::Scalar(180, 256, MAX(_vmin, _vmax)), mask);
+               cv::Scalar(180, 256, MAX(_vmin, _vmax)), mask);// inrange -> binary
+
        int ch[] = {0, 0};
-       image_hue.create(image_hsv.size(), image_hsv.depth());
+       image_hue.create(image_hsv.size(), image_hsv.depth());// hsv -> hue value extraction
+
        cv::mixChannels(&image_hsv, 1, &image_hue, 1, ch, 1);
 
 
-//      cv::imshow("HSV",image_hue);
+      //cv::imshow("HSV",image_hue);
 
        //cv::Mat image_binary;
        //cv::threshold(image_hue,image_binary,50,255,thresh);
@@ -215,7 +223,7 @@ void fixed_imageCallback(const sensor_msgs::ImageConstPtr& msg_image)
        plot_histogram(image_hue,histsize,valueRange,ranges,channels,dims);*/
 
 
-       if(trackObject <0) //make roi to histogram and backproject
+       if(trackObject <0) //make roi to histogram and backproject // roi find -> trackObject = -1 // used kalman filter.
        {
          // Object has been selected by user, set up CAMShift search properties once
         cv::Mat roi(image_hue, selection), maskroi(mask, selection);
@@ -228,6 +236,7 @@ void fixed_imageCallback(const sensor_msgs::ImageConstPtr& msg_image)
         histimg = cv::Scalar::all(0);
         int binW = histimg.cols / hsize;
         cv::Mat buf(1, hsize, CV_8UC3);
+
         for( int i = 0; i < hsize; i++ )
             buf.at<cv::Vec3b>(i) = cv::Vec3b(cv::saturate_cast<uchar>(i*180./hsize), 255, 255);
         cv::cvtColor(buf, buf, cv::COLOR_HSV2BGR);
@@ -240,6 +249,7 @@ void fixed_imageCallback(const sensor_msgs::ImageConstPtr& msg_image)
                         cv::Scalar(buf.at<cv::Vec3b>(i)), -1, 8 );
         }
        }
+
          cv::calcBackProject(&image_hue, 1, 0, image_hist, backproj, &phranges);
          backproj &= mask;
 
@@ -261,6 +271,7 @@ void fixed_imageCallback(const sensor_msgs::ImageConstPtr& msg_image)
          if(trackBox.size.width > 70 && trackBox.size.height > 370 )
          {
 
+             //this value used in kalmanfilter
            if(trackBox.center.x < 640 && trackBox.center.y < 480)
            {
              _camera.Object_u = (int)trackBox.center.x;
@@ -302,11 +313,11 @@ void fixed_imageCallback(const sensor_msgs::ImageConstPtr& msg_image)
         cv::Point predictPt(prediction.at<float>(0),prediction.at<float>(1));
         measurement(0) = _camera.Object_u;
         measurement(1) = _camera.Object_v;
-        cv::Mat estimated = KF.correct((measurement));
+        cv::Mat estimated = KF.correct((measurement));//???
 
         //cv::Point statePt(estimated.at<float>(0),estimated.at<float>(1));
-        _camera.statePt.x = estimated.at<float>(0);
-        _camera.statePt.y = estimated.at<float>(1);
+        _camera.statePt.x = estimated.at<float>(0);//??
+        _camera.statePt.y = estimated.at<float>(1);//??
 
 
        // cv::Point measPt(measurement(0),measurement(1));
@@ -320,8 +331,10 @@ void fixed_imageCallback(const sensor_msgs::ImageConstPtr& msg_image)
 
      }
 
-     cv::line(image, cv::Point( _camera.statePt.x - 5, _camera.statePt.y - 5 ), cv::Point( _camera.statePt.x + 5, _camera.statePt.y + 5 ), cv::Scalar(255,255,255), 2, CV_AA, 0);
-     cv::line(image, cv::Point( _camera.statePt.x + 5, _camera.statePt.y - 5 ), cv::Point( _camera.statePt.x - 5, _camera.statePt.y + 5 ), cv::Scalar(255,255,255), 2, CV_AA, 0 );
+     cv::line(image, cv::Point( _camera.statePt.x - 5, _camera.statePt.y - 5 ), cv::Point( _camera.statePt.x + 5, _camera.statePt.y + 5 ),
+              cv::Scalar(255,255,255), 2, CV_AA, 0);
+     cv::line(image, cv::Point( _camera.statePt.x + 5, _camera.statePt.y - 5 ), cv::Point( _camera.statePt.x - 5, _camera.statePt.y + 5 ),
+              cv::Scalar(255,255,255), 2, CV_AA, 0 );
 
      // calculate distance
 
@@ -363,8 +376,10 @@ void fixed_imageCallback(const sensor_msgs::ImageConstPtr& msg_image)
 
 }
 
-void EndEffector_imageCallback(const sensor_msgs::ImageConstPtr& msg_image)
+
+void EndEffector_imageCallback(const sensor_msgs::ImageConstPtr& msg_image)//end-effector camera
 {
+
   cv_bridge::CvImagePtr img_prt;
   try
   {
@@ -411,7 +426,7 @@ void EndEffector_imageCallback(const sensor_msgs::ImageConstPtr& msg_image)
        std::vector<cv::Vec3f> circles;
 
        // Apply the Hough Transform to find the circles
-       cv::HoughCircles( img_binary, circles, CV_HOUGH_GRADIENT, 1, 20, 200, 50, 0, 0 );
+       cv::HoughCircles( img_binary, circles, CV_HOUGH_GRADIENT, 1, 20, 200, 50, 0, 0 ); // circle of incluser detection used houghcircle
 
        // Draw the circles detected
        for( size_t i = 0; i < circles.size(); i++ )
@@ -423,7 +438,8 @@ void EndEffector_imageCallback(const sensor_msgs::ImageConstPtr& msg_image)
 
         }
       cv::Mat img_canny;
-      cv::Canny(img_binary,img_canny,end_canny_lowThreshold,end_canny_highThreshold,3); //canny edge input image, output image, low threshold, high threshold, size
+      //canny edge input image, output image, low threshold, high threshold, size
+      cv::Canny(img_binary,img_canny,end_canny_lowThreshold,end_canny_highThreshold,3);
 
 
      // cv::pyrMeanShiftFiltering(end_image, image_hsv, 30, 45, 1); segmentation
@@ -451,6 +467,7 @@ void EndEffector_imageCallback(const sensor_msgs::ImageConstPtr& msg_image)
 
 }
 
+// detectenabledepth & detectenablegripper in main_window file
 void depthCallback(const sensor_msgs::ImageConstPtr& msg_depth)
   {
     cv_bridge::CvImagePtr img_prt_depth;
@@ -479,6 +496,8 @@ void depthCallback(const sensor_msgs::ImageConstPtr& msg_depth)
     }
     cv::Mat mat_depth = img_prt_depth->image;
 
+
+    //point of interest
     //uint16_t _depth, _objectTopLeft_depth, _objectTopRight_depth, _objectBottomLeft_depth ,_objectBottomRight_depth;
    // _depth = mat_depth.at<uint16_t>(cv::Point((_detect._objectTopLeft_x+_detect._objectBottomRight_x)/2,(_detect._objectTopLeft_y+_detect._objectBottomRight_y)/2));
     _depth_1 = mat_depth.at<uint16_t>(cv::Point(190,270));
@@ -511,8 +530,10 @@ void depthCallback(const sensor_msgs::ImageConstPtr& msg_depth)
       _camera.enable_gripper = 0;
     }
 
-    ROS_INFO("Detect gripper depth: %d, %d, %d, %d %f",_objectTopLeft_depth,_objectTopRight_depth,_objectBottomLeft_depth,_objectBottomRight_depth,_camera.enable_gripper );
-    ROS_INFO("Detect depth: %d, %d, %d, %d",_depth_1,_depth_2,_depth_3,_depth_4);
+    ROS_INFO("Detect gripper depth: %d, %d, %d, %d, %f",
+             _objectTopLeft_depth,_objectTopRight_depth,_objectBottomLeft_depth,_objectBottomRight_depth,_camera.enable_gripper );
+    ROS_INFO("Detect depth: %d, %d, %d, %d, %f",_depth_1,_depth_2,_depth_3,_depth_4,_camera.enable_depth);
+    ROS_INFO("enable_depth: %f, enable_gripper: %f",_camera.enable_depth, _camera.enable_gripper);
 
   }
 
@@ -521,6 +542,7 @@ int main(int argc, char **argv)
 {
   ros::init(argc, argv, "fixedcamera");
   ros::NodeHandle nh;
+
   image_transport::ImageTransport it(nh);
   image_transport::Subscriber sub = it.subscribe("/camera1/color/image_raw", 1, fixed_imageCallback);
 
@@ -533,6 +555,8 @@ int main(int argc, char **argv)
   image_transport::Subscriber sub2 = it2.subscribe("/camera2/color/image_raw", 10, EndEffector_imageCallback);
 
 
+
+  // used kalman filter
   KF.transitionMatrix = (cv::Mat_<float>(4, 4) << 1,0,1,0,   0,1,0,1,  0,0,1,0,  0,0,0,1);
   measurement.setTo(cv::Scalar(0));
   KF.statePre.at<float>(0) = _camera.Object_u;
@@ -553,12 +577,12 @@ int main(int argc, char **argv)
   cv::createTrackbar("Vmin","image",&vmin, 256,0);
   cv::createTrackbar("Vmax","image",&vmax, 256,0);
   cv::createTrackbar("Smin","image",&smin, 256,0);
+
  // cv::createTrackbar("thresh","image",&thresh, 256,0);
   cv::namedWindow("select");
 
   cv::namedWindow("EndEffector_image");
   cv::createTrackbar("thresh","EndEffector_image",&thresh, 256,0);
-
 
   boost::thread th1(boost::bind(&multi_publish));
 

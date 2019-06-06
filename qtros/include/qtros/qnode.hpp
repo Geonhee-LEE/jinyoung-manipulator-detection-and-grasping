@@ -100,7 +100,7 @@ public:
   float _detectPixelObject_y;
   float _detectPixelObject_z;
   float _detectPixelObject_degree;
-  float _detectEnableGripper;
+  float _detectEnableGripper;//important
   float _detectEnabledepth;
   int _detectpixel_u;
   int _detectpixel_v;

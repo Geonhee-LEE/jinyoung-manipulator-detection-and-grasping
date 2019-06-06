@@ -59,9 +59,9 @@ QNode::~QNode() {
 	wait();
 }
 
-bool QNode::init()
+bool QNode::init()// init function 1
 {
-	ros::init(init_argc,init_argv,"qtros");
+        ros::init(init_argc,init_argv,"qtros"); //init function 2 call
 	if ( ! ros::master::check() ) {
 		return false;
 	}
@@ -71,9 +71,12 @@ bool QNode::init()
   ros::NodeHandle nh_2;
 	// Add your ros communications here.
     //chatter_publisher = n.advertise<std_msgs::String>("chatter", 1000);
-  sub = n.subscribe("joint_states",1000,&QNode::chatterCallback,this);
-  subObject = nh.subscribe("objects",1000,&QNode::ObjectCallback,this);
+  sub = n.subscribe("joint_states",1000,&QNode::chatterCallback,this);//data
+  subObject = nh.subscribe("objects",1000,&QNode::ObjectCallback,this);//data?? where
+
   chatter_publisher = nh_2.advertise<std_msgs::String>("Endvalue_msg",1000);
+
+
   move_group = new moveit::planning_interface::MoveGroupInterface(PLANNING_GROUP);
   move_group->setEndEffectorLink("gripper");
   robot_model_loader::RobotModelLoader robot_model_loader("robot_description");
@@ -82,33 +85,41 @@ bool QNode::init()
 	return true;
 }
 
-bool QNode::init(const std::string &master_url, const std::string &host_url) {
-	std::map<std::string,std::string> remappings;
-	remappings["__master"] = master_url;
-  remappings["__hostname"] = host_url;
-	ros::init(remappings,"qtros");
+bool QNode::init(const std::string &master_url, const std::string &host_url) { // init function 2
+        std::map<std::string,std::string> remappings; //
+        remappings["__master"] = master_url; //
+  remappings["__hostname"] = host_url; //
+        ros::init(remappings,"qtros"); //recursive call
 	if ( ! ros::master::check() ) {
 		return false;
 	}
 	ros::start(); // explicitly needed since our nodehandle is going out of scope.
-	ros::NodeHandle n;
+  ros::NodeHandle n;
   ros::NodeHandle nh;
   ros::NodeHandle nh_2;
-  sub = n.subscribe("joint_states",1000,&QNode::chatterCallback,this);
+
+
+  sub = n.subscribe("joint_states",1000,&QNode::chatterCallback,this);//
   subObject = nh.subscribe("Object",10,&QNode::ObjectCallback,this);
+
   chatter_publisher = nh_2.advertise<std_msgs::Float32MultiArray>("Endvalue",100);
-  sub_detectObject = nh_2.subscribe("FixedCamera_Object",100,&QNode::detectObjectCallback,this);
+
+  sub_detectObject = nh_2.subscribe("FixedCamera_Object",100,&QNode::detectObjectCallback,this); // no code in init function 1
+
+  //robot_ model_
   move_group = new moveit::planning_interface::MoveGroupInterface(PLANNING_GROUP);
   move_group->setEndEffectorLink("gripper");
   robot_model_loader::RobotModelLoader robot_model_loader("robot_description");
   kinematic_model = robot_model_loader.getModel();
-  start();
+  start();//???
 	return true;
 }
 
 void QNode::run() {
-  ros::Rate loop_rate(10);
-  while(ros::ok())
+
+  ros::Rate loop_rate(10); // 10 hz repeat
+
+  while(ros::ok()) //current postion, orientation save.
   {
     std_msgs::Float32MultiArray array;
     array.data.clear();
@@ -121,16 +132,18 @@ void QNode::run() {
     /*std_msgs::String msg;
     QString data = QString("x:%1y:%2z:%3R:%4P:%5Y:%6").arg(_currentX).arg(_currentY).arg(_currentZ).arg(_current_Orientation_X).arg(_current_Orientation_Y).arg(_current_Orientation_Z);
     msg.data = data.toUtf8().constData();*/
-    chatter_publisher.publish(array);
+    chatter_publisher.publish(array); //publisher name : current_position_publisher
     ros::spinOnce();
     loop_rate.sleep();
   }
+
     //ros::spin();
     std::cout << "Ros shutdown, proceeding to close the gui." << std::endl;
     Q_EMIT rosShutdown(); // used to signal the gui for a shutdown (useful to roslaunch)
+
 }
 
-void QNode::log( const LogLevel &level, const std::string &msg) {
+void QNode::log( const LogLevel &level, const std::string &msg) { //Debug, Info, Warn, Error, Fatal msg extraction.
 	logging_model.insertRows(logging_model.rowCount(),1);
 	std::stringstream logging_model_msg;
 	switch ( level ) {
@@ -165,7 +178,7 @@ void QNode::log( const LogLevel &level, const std::string &msg) {
 	Q_EMIT loggingUpdated(); // used to readjust the scrollbar
 }
 
-void QNode::chatterCallback(const sensor_msgs::JointState::ConstPtr& msg)
+void QNode::chatterCallback(const sensor_msgs::JointState::ConstPtr& msg) // msg position data -> GetJointValueArr
 {
 // int joint_num;
 // joint_num = msg->position.size();
@@ -179,7 +192,7 @@ void QNode::chatterCallback(const sensor_msgs::JointState::ConstPtr& msg)
 void QNode::ObjectCallback(const std_msgs::Float32MultiArrayConstPtr& msg)
 {
   const std::vector<float> & data= msg->data;
-  if(data.size())
+  if(data.size()) //if there is data in the buffer.
   {
     for(unsigned int i=0; i<data.size(); i+=12)
     {

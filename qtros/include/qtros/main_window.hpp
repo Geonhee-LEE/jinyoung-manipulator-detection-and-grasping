@@ -55,6 +55,20 @@ public:
   void Thread_point();
   void Check_pixel();
   void Repeat();
+
+
+  void Gripper_Open();
+  void Gripper_Close();
+  void pick_and_place_task();
+
+  void inverse_and_move(double position_x,double position_y,double position_z,double orientation_r,double orientation_p,double orientation_y);
+  void joint_and_move(double joint_1, double joint_2, double joint_3, double joint_4, double joint_5, double joint_6);
+  void Task_pick_and_place();
+
+  geometry_msgs::Vector3 Quaternion_to_RPY();
+  geometry_msgs::Vector3 Quaternion_to_RPY(geometry_msgs::PoseStamped current_pose, tf::Quaternion quat);
+  tf::Quaternion RPY_to_Quaternion(double rotate_x, double rotate_y, double rotate_z);
+
   bool check = true;
   bool complete_pose = false;
   bool check_pixel_enable = true;
@@ -100,6 +114,7 @@ public:
     void on_btnSendtoRobot_clicked();
     void SyncMoveitToRobot();
     void on_btnDetectPose_clicked();
+    void on_btntest_clicked();
     void on_btnEndToCameraCoordinate_clicked();
     double HomogeneousTransformationMatrix(double theta, double alpha, double ai, double di);
     void on_btnMoveToPixelPoint_clicked();
@@ -152,6 +167,8 @@ private:
   double _CurrentCamera_P;
   double _CurrentCamera_Y;
 
+  int grip_value;
+  int inv_count = 0;
 
   bool found_ik;
   std::vector<double> joint_values;
