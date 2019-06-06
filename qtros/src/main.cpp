@@ -11,7 +11,7 @@
 
 #include <QtGui>
 #include <QApplication>
-#include "../include/qtros/main_window.hpp"
+#include "qtros/main_window.hpp"
 
 /*****************************************************************************
 ** Main

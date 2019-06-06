@@ -12,7 +12,7 @@
 #include <QtGui>
 #include <QMessageBox>
 #include <iostream>
-#include "../include/qtros/main_window.hpp"
+#include "qtros/main_window.hpp"
 #include <string>
 #include <iostream>
 #include <tf/transform_datatypes.h>

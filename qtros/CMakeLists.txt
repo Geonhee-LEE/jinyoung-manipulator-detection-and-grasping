@@ -20,11 +20,9 @@ find_package(catkin REQUIRED
     image_transport
     genmsg
     message_filters
+    find_object_2d
     tf
-    message_generation)
-
-find_package(catkin REQUIRED
-    COMPONENTS
+    message_generation
     moveit_core
     moveit_visual_tools
     moveit_ros_planning
@@ -36,6 +34,8 @@ find_package(catkin REQUIRED
     rosbag
     )
 
+
+
 find_package(OpenCV REQUIRED)
 
 find_package(Boost REQUIRED system filesystem date_time thread)
@@ -44,8 +44,6 @@ find_package(Boost REQUIRED system filesystem date_time thread)
 include_directories(include ${catkin_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS})
 
 include_directories(SYSTEM ${THIS_PACKAGE_INCLUDE_DIRS} ${Boost_INCLUDE_DIR} ${EIGEN3_INCLUDE_DIRS})
-
-include_directories(${catkin_INCLUDE_DIRS})
 
 link_directories(${catkin_LIBRARY_DIRS})
 
@@ -61,6 +59,7 @@ catkin_package(
   std_msgs
   image_transport
   message_filters
+  find_object_2d
   tf
 )
 

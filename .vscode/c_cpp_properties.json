@@ -1,0 +1,28 @@
+{
+    "configurations": [
+        {
+            "browse": {
+                "databaseFilename": "",
+                "limitSymbolsToIncludedHeaders": true
+            },
+            "includePath": [
+                "/home/geonhee/catkin_ws/devel/include",
+                "/opt/ros/kinetic/include",
+                "/home/geonhee/catkin_ws/src/nscl-mobilerobot-ros/nscl_autonomous_driving/autonomous_navigation/include",
+                "/home/geonhee/catkin_ws/src/jinyoung-manipulator/camera_node/include",
+                "/home/geonhee/catkin_ws/src/jinyoung-manipulator/jinyoung_gazebo/include",
+                "/home/geonhee/catkin_ws/src/jinyoung-manipulator/qtros/include",
+                "/home/geonhee/catkin_ws/src/jinyoung-manipulator/realsense/realsense2_camera/include",
+                "/home/geonhee/catkin_ws/src/nscl-mobilerobot-ros/sick_tim/include",
+                "/home/geonhee/catkin_ws/src/universal_robot/ur_kinematics/include",
+                "/usr/include"
+            ],
+            "name": "Linux",
+            "intelliSenseMode": "gcc-x64",
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "c11",
+            "cppStandard": "c++17"
+        }
+    ],
+    "version": 4
+}

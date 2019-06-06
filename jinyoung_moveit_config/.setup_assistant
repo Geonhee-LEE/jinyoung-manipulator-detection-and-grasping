@@ -1,0 +1,11 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: mr5_v5
+    relative_path: urdf/xacro/mr5_gripper_v2.urdf.xacro
+    xacro_args: "--inorder "
+  SRDF:
+    relative_path: config/mr5.srdf
+  CONFIG:
+    author_name: Geonhee
+    author_email: gunhee6392@gmail.com
+    generated_timestamp: 1553781436

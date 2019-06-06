@@ -2,15 +2,22 @@
 
 1. Ubuntu 16.04
 
-2. ROS Kinetic
+2. [ROS Kinetic](http://wiki.ros.org/kinetic/Installation/Ubuntu)
 
-3. MoveIt!
+3. [MoveIt!](http://docs.ros.org/kinetic/api/moveit_tutorials/html/doc/getting_started/getting_started.html)
 
-4. Realsense ROS Package
+4. OpenCV ROS Package
 
-5. OpenCV ROS Package
+5. [Intel® RealSense™ SDK](https://github.com/IntelRealSense/librealsense/blob/master/doc/distribution_linux.md)
 
-6. [ROS Qt Creator](https://ros-qtc-plugin.readthedocs.io/en/latest/)
+6. [Realsense ROS Package](https://github.com/intel-ros/realsense)
+
+7. [ROS Qt Creator](https://ros-qtc-plugin.readthedocs.io/en/latest/_source/How-to-Install-Users.html#qt-installer-procedure)
+
+8. Additional libraries
+
+ <pre><code> 
+sudo apt-get install ros-kinetic-tf2-geometry-msgs ros-kinetic-find-object-2d ros-kinetic-moveit* ros-kinetic-qt-build ros-kinetic-map-server ros-kinetic-move-base  ros-kinetic-rviz-visual-tools ros-kinetic-interactive-markers   ros-kinetic-qt-ros -y  </pre></code>
 
 
 
