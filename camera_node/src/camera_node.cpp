@@ -45,8 +45,8 @@ void multi_publish()
       msg_array.data.push_back(_camera.calculate_y);
       msg_array.data.push_back(_camera.Object_angle);
       msg_array.data.push_back(_camera.enable_gripper);
-      msg_array.data.push_back(_camera.statePt.x);
-      msg_array.data.push_back(_camera.statePt.y);
+      msg_array.data.push_back(_camera.Object_u);
+      msg_array.data.push_back(_camera.Object_v);
       msg_array.data.push_back(_camera.enable_depth);
       msg_array.data.push_back(_camera.NKalman_calculate_x);
       msg_array.data.push_back(_camera.NKalman_calculate_y);
@@ -209,7 +209,7 @@ void fixed_imageCallback(const sensor_msgs::ImageConstPtr& msg_image)//fixed cam
        cv::mixChannels(&image_hsv, 1, &image_hue, 1, ch, 1);
 
 
-      //cv::imshow("HSV",image_hue);
+//      cv::imshow("HSV",image_hue);
 
        //cv::Mat image_binary;
        //cv::threshold(image_hue,image_binary,50,255,thresh);
