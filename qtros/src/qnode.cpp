@@ -15,7 +15,8 @@
 #include <string>
 #include <std_msgs/String.h>
 #include <sstream>
-#include "qtros/qnode.hpp"
+#include "../include/qtros/qnode.hpp"
+#include "find_object_2d/ObjectsStamped.h"
 #include <image_transport/image_transport.h>
 #include <opencv2/highgui/highgui.hpp>
 #include <cv_bridge/cv_bridge.h>
@@ -68,6 +69,7 @@ bool QNode::init()// init function 1
   ros::NodeHandle n;
   ros::NodeHandle nh;
   ros::NodeHandle nh_2;
+
 	// Add your ros communications here.
     //chatter_publisher = n.advertise<std_msgs::String>("chatter", 1000);
   sub = n.subscribe("joint_states",1000,&QNode::chatterCallback,this);//data
@@ -104,6 +106,7 @@ bool QNode::init(const std::string &master_url, const std::string &host_url) { /
   chatter_publisher = nh_2.advertise<std_msgs::Float32MultiArray>("Endvalue",100);
 
   sub_detectObject = nh_2.subscribe("FixedCamera_Object",100,&QNode::detectObjectCallback,this); // no code in init function 1
+  sub_labeledObject = nh_2.subscribe("/object/center_pos",100, &QNode::detectLabeledCallback,this); // no code in init function 1
 
   //robot_ model_
   move_group = new moveit::planning_interface::MoveGroupInterface(PLANNING_GROUP);
@@ -208,6 +211,50 @@ void QNode::ObjectCallback(const std_msgs::Float32MultiArrayConstPtr& msg)
 
     }
   }
+}
+void QNode::detectLabeledCallback(const std_msgs::Float32MultiArrayConstPtr& msg)
+{
+
+  this->cur_time = ros::Time::now();
+  cur_time_double = ros::Time::now().toSec();
+
+  //cout << "cur_time - pre_time: " << cur_time - pre_time <<endl;
+
+  const std::vector<float> & data= msg->data;
+  if(data.size())
+  {
+    _labeledCenter_x = data[0];
+    _labeledCenter_y = data[1];
+
+    _expected_2_y = (_pre_labeledCenter_x - _labeledCenter_x)* _dist_pixel_u;
+
+    _labeledCenter_calculate_x = 457 - (_labeledCenter_y - 480/2) * _dist_pixel_v; //camera coordinate 457, 471;
+    _labeledCenter_calculate_y = 471 - (_labeledCenter_x - 640/2) * _dist_pixel_u;
+
+     _expected_y =  _pre_labeledCenter_calculate_y - _labeledCenter_calculate_y;
+
+     ROS_INFO("pixelObject: %f, %f ",_labeledCenter_x,_labeledCenter_y);
+     ROS_INFO("pixelObject_calculate: %f, %f ", _labeledCenter_calculate_x, _labeledCenter_calculate_y);
+
+     ROS_INFO("time_: %f", cur_time_double - pre_time_double);
+
+     ROS_INFO("expected_y: %f  ", _expected_y);
+
+     ROS_INFO("expected_2_y: %f  ", _expected_2_y);
+
+     _pre_labeledCenter_x = _labeledCenter_x;
+     _pre_labeledCenter_calculate_y = _labeledCenter_calculate_y;
+
+     velocity_enclosure = _expected_y/(float)(cur_time_double - pre_time_double);
+
+     ROS_INFO("velocity: %f  ", velocity_enclosure);
+
+     pre_time_double = cur_time_double;
+  }
+  //ROS_INFO_STREAM("cur_time2 : "<< this->cur_time );
+  //ROS_INFO_STREAM("pre_time2: "<<  this->pre_time);
+
+
 }
 
 void QNode::detectObjectCallback(const std_msgs::Float32MultiArrayConstPtr& msg)

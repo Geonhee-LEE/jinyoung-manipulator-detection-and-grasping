@@ -1682,6 +1682,32 @@
               <string>0</string>
              </property>
             </widget>
+            <widget class="QPushButton" name="btn_test_move">
+             <property name="geometry">
+              <rect>
+               <x>300</x>
+               <y>240</y>
+               <width>111</width>
+               <height>51</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>test move</string>
+             </property>
+            </widget>
+            <widget class="QPushButton" name="btn_fk">
+             <property name="geometry">
+              <rect>
+               <x>30</x>
+               <y>250</y>
+               <width>89</width>
+               <height>25</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>F.K</string>
+             </property>
+            </widget>
            </widget>
           </widget>
          </widget>

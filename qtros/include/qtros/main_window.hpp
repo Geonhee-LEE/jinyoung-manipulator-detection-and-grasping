@@ -64,6 +64,19 @@ public:
   void inverse_and_move(double position_x,double position_y,double position_z,double orientation_r,double orientation_p,double orientation_y);
   void joint_and_move(double joint_1, double joint_2, double joint_3, double joint_4, double joint_5, double joint_6);
   void Task_pick_and_place();
+  void test_move_func();
+  void tracking();
+  void tracking_test1();
+
+  void _190714_trakint_test();
+  void _190714_trakint_test1();
+  void _190714_trakint_test2();
+  void _190714_trakint_test3();
+  void _190714_trakint_test4();
+
+  void _190714_trakint_test_sona_500x300_point();
+  void _190714_trakint_test_sona_700x300_point();
+  void _190714_trakint_test_sona_700x200_point();
 
   geometry_msgs::Vector3 Quaternion_to_RPY();
   geometry_msgs::Vector3 Quaternion_to_RPY(geometry_msgs::PoseStamped current_pose, tf::Quaternion quat);
@@ -122,6 +135,9 @@ public:
     void on_btnGPIO_OFF_clicked();
     void on_btnpixel_check_clicked();
     void on_btnRepeat_clicked();
+    void on_btn_test_move_clicked();
+    void on_btn_fk_clicked();
+
 
 private:
 	Ui::MainWindowDesign ui;
@@ -166,6 +182,19 @@ private:
   double _CurrentCamera_R;
   double _CurrentCamera_P;
   double _CurrentCamera_Y;
+
+  double _task_roll = -94.46;
+  double _task_pitch = -75.67;
+  double _task_yaw = 94.46;
+
+  double _task_sona_point_roll = -94.46;
+  double _task_sona_point_pitch = -75.67;
+  double _task_sona_point_yaw = 4.46;
+
+  double point_enclosure_x;
+
+  double avg_velocity;
+  int vel_check_count;
 
   int grip_value;
   int inv_count = 0;

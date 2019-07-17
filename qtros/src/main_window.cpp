@@ -12,7 +12,7 @@
 #include <QtGui>
 #include <QMessageBox>
 #include <iostream>
-#include "qtros/main_window.hpp"
+#include "../include/qtros/main_window.hpp"
 #include <string>
 #include <iostream>
 #include <tf/transform_datatypes.h>
@@ -371,14 +371,41 @@ void qtros::MainWindow::on_btnMoveit_setJointValue_clicked()
   moveit::core::RobotStatePtr current_state = qnode.move_group->getCurrentState();
   std::vector<double> joint_group_positions;
   current_state->copyJointGroupPositions(joint_model_group,joint_group_positions);
+
   joint_group_positions[0] = ui.txtsetJointValue_1->text().trimmed().toDouble()*pi/180;
   joint_group_positions[1] = ui.txtsetJointValue_2->text().trimmed().toDouble()*pi/180;
   joint_group_positions[4] = ui.txtsetJointValue_3->text().trimmed().toDouble()*pi/180;
   joint_group_positions[7] = ui.txtsetJointValue_4->text().trimmed().toDouble()*pi/180;
   joint_group_positions[8] = ui.txtsetJointValue_5->text().trimmed().toDouble()*pi/180;
   joint_group_positions[9] = ui.txtsetJointValue_6->text().trimmed().toDouble()*pi/180;
+
   qnode.move_group->setJointValueTarget(joint_group_positions);
   qnode.move_group->move();
+
+  // Get pose & orientation
+  qnode.move_group->setEndEffectorLink("gripper");
+  geometry_msgs::PoseStamped current_pose =    qnode.move_group->getCurrentPose();
+
+  // the incoming geometry_msgs::Quaternion is transformed to a tf::Quaterion
+  tf::Quaternion quat;
+
+  //////////////
+  tf::quaternionMsgToTF( current_pose.pose.orientation, quat);
+
+  // the tf::Quaternion has a method to acess roll pitch and yaw
+  double roll, pitch, yaw;
+  tf::Matrix3x3(quat).getRPY(roll, pitch, yaw);
+
+  // the found angles are written in a geometry_msgs::Vector3
+  geometry_msgs::Vector3 rpy;
+  rpy.x = roll;
+  rpy.y = pitch;
+  rpy.z = yaw;
+
+  /////////////////
+
+  ROS_INFO_STREAM(current_pose.pose.position.x <<"," << current_pose.pose.position.y <<"," << current_pose.pose.position.z <<"\n" <<
+                  rpy.x<<"," << rpy.y<<"," << rpy.z);
 
 }
 
@@ -474,7 +501,13 @@ void qtros::MainWindow::on_btnSendtoRobot_clicked()
 
 }
 
-void qtros::MainWindow::on_btntest_clicked() //here
+void qtros::MainWindow::on_btntest_clicked() //here test
+{
+    boost::thread th3(boost::bind(&MainWindow::_190714_trakint_test2, this));
+}
+
+
+void qtros::MainWindow::test_move_func()
 {
     int turn = 0;
     int i = 0;
@@ -486,12 +519,12 @@ void qtros::MainWindow::on_btntest_clicked() //here
         case 0:
         {
             geometry_msgs::Pose target_pose;
-            target_pose.position.x = 400;
+            target_pose.position.x = 550;
             target_pose.position.y = 0;
-            target_pose.position.z = 500;
-            double rotate_x = 90*pi/180;
-            double rotate_y = 0*pi/180;
-            double rotate_z = (-90)*pi/180;
+            target_pose.position.z = 300;
+            double rotate_x = _task_roll*pi/180;
+            double rotate_y = _task_pitch*pi/180;
+            double rotate_z = _task_yaw*pi/180;
 
             tf::Quaternion q;
             q.setRPY(rotate_x,rotate_y,rotate_z);
@@ -516,8 +549,6 @@ void qtros::MainWindow::on_btntest_clicked() //here
               }
               //std::copy(joint_values.begin(),joint_values.end(),arr);
 
-
-
               Moveit_Jointvalue_1 = QString::number(joint_values[0]*180/pi,'f',4).toDouble();
               Moveit_Jointvalue_2 = QString::number(joint_values[1]*180/pi,'f',4).toDouble();
               Moveit_Jointvalue_3 = QString::number(joint_values[4]*180/pi,'f',4).toDouble();
@@ -541,35 +572,40 @@ void qtros::MainWindow::on_btntest_clicked() //here
               ui.listWidget_Server_text->addItem(QString("%1").arg(Joint_data));
               ui.listWidget_Server_text->scrollToBottom();
 
-              //while(true)
-              //{
-                //if(complete_pose)
-                 //break;
-              //}
+              while(true)
+              {
+               if(complete_pose)
+                  break;
+              }
 
-              ros::Duration(4).sleep();
+              ros::Duration(1).sleep();
 
+              Gripper_Open();
+
+              ros::Duration(1).sleep();
               complete_pose = false;
               turn = 1;
+
             }
             else
             {
               ROS_INFO("Did not find IK solution");
             }
 
+            break;
+          }
 
-          break;
-        }
 
         case 1:
         {
             geometry_msgs::Pose target_pose;
-            target_pose.position.x = 400;
-            target_pose.position.y = 200;
-            target_pose.position.z = 500;
-            double rotate_x = 90*pi/180;
-            double rotate_y = 0*pi/180;
-            double rotate_z = (-90)*pi/180;
+            target_pose.position.x = ui.txt_x_data_1->text().trimmed().toDouble();
+            target_pose.position.y = ui.txt_y_data_1->text().trimmed().toDouble();
+            target_pose.position.z = 300;
+            double rotate_x = 117*pi/180;
+            double rotate_y = (-90)*pi/180;
+            double rotate_z = (-117)*pi/180;
+
 
 
           tf::Quaternion q;
@@ -619,17 +655,16 @@ void qtros::MainWindow::on_btntest_clicked() //here
             tcpSocket->write(Joint_data.toLocal8Bit().constData());
             ui.listWidget_Server_text->addItem(QString("%1").arg(Joint_data));
             ui.listWidget_Server_text->scrollToBottom();
-            //while(true)
-            //{
-              //if(complete_pose)
-               //break;
-            //}
 
-            ros::Duration(4).sleep();
+            while(true)
+            {
+             if(complete_pose)
+                break;
+            }
+            ros::Duration(3).sleep();
 
             complete_pose = false;
-            turn = 0;
-            i++;
+            turn = 2;
 
           }
           else
@@ -639,10 +674,257 @@ void qtros::MainWindow::on_btntest_clicked() //here
 
           break;
         }
-       }
 
-    }
+        case 2:
+        {
+            geometry_msgs::Pose target_pose;
+            target_pose.position.x = ui.txt_x_data_1->text().trimmed().toDouble();
+            target_pose.position.y = ui.txt_y_data_1->text().trimmed().toDouble();
+            target_pose.position.z = 140;
+            double rotate_x = 117*pi/180;
+            double rotate_y = (-90)*pi/180;
+            double rotate_z = (-117)*pi/180;
 
+          tf::Quaternion q;
+          q.setRPY(rotate_x,rotate_y,rotate_z);
+          target_pose.orientation.x = q.x();
+          target_pose.orientation.y = q.y();
+          target_pose.orientation.z = q.z();
+          target_pose.orientation.w = q.w();
+          const robot_state::JointModelGroup *joint_model_group = qnode.move_group->getCurrentState()->getJointModelGroup(qnode.PLANNING_GROUP);
+          robot_state::RobotStatePtr kinematic_state(new robot_state::RobotState(qnode.kinematic_model));
+          const std::vector<std::string> &joint_names = joint_model_group->getVariableNames();
+
+          found_ik = kinematic_state->setFromIK(joint_model_group, target_pose, 10, 0.01); //0.1ms
+
+          if (found_ik)
+          {
+            kinematic_state->copyJointGroupPositions(joint_model_group, joint_values);
+            double arr[9];
+            for (std::size_t i = 0; i < joint_names.size(); ++i)
+            {
+
+              ROS_INFO("Joint %s: %f", joint_names[i].c_str(), joint_values[i]);
+            }
+            //std::copy(joint_values.begin(),joint_values.end(),arr);
+
+
+
+            Moveit_Jointvalue_1 = QString::number(joint_values[0]*180/pi,'f',4).toDouble();
+            Moveit_Jointvalue_2 = QString::number(joint_values[1]*180/pi,'f',4).toDouble();
+            Moveit_Jointvalue_3 = QString::number(joint_values[4]*180/pi,'f',4).toDouble();
+            Moveit_Jointvalue_4 = QString::number(joint_values[7]*180/pi,'f',4).toDouble();
+            Moveit_Jointvalue_5 = QString::number(joint_values[8]*180/pi,'f',4).toDouble();
+            Moveit_Jointvalue_6 = QString::number(joint_values[9]*180/pi,'f',4).toDouble();
+
+            qnode.move_group->setPoseTarget(target_pose);
+          //  qnode.move_group->move();
+            QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(Moveit_Jointvalue_1).arg(Moveit_Jointvalue_2).arg(Moveit_Jointvalue_3).arg(Moveit_Jointvalue_4).arg(Moveit_Jointvalue_5).arg(Moveit_Jointvalue_6);
+            //QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(qnode.joint_values[0]).arg(qnode.joint_values[1])
+            //    .arg(qnode.joint_values[4]).arg(qnode.joint_values[7]).arg(qnode.joint_values[8]).arg(qnode.joint_values[9]);
+            ROS_INFO("joint1: %f",Moveit_Jointvalue_1);
+            ROS_INFO("joint2: %f",Moveit_Jointvalue_2);
+            ROS_INFO("joint3: %f",Moveit_Jointvalue_3);
+            ROS_INFO("joint4: %f",Moveit_Jointvalue_4);
+            ROS_INFO("joint5: %f",Moveit_Jointvalue_5);
+            ROS_INFO("joint6: %f",Moveit_Jointvalue_6);
+            QString msg = "Moving!";
+            tcpSocket->write(Joint_data.toLocal8Bit().constData());
+            ui.listWidget_Server_text->addItem(QString("%1").arg(Joint_data));
+            ui.listWidget_Server_text->scrollToBottom();
+
+            while(true)
+            {
+             if(complete_pose)
+                break;
+            }
+
+            ros::Duration(3).sleep();
+
+
+            Gripper_Close();
+
+
+            ros::Duration(3).sleep();
+
+
+            complete_pose = false;
+            turn = 3;
+
+          }
+          else
+          {
+            ROS_INFO("Did not find IK solution");
+          }
+
+          break;
+        }
+
+
+        case 3:
+        {
+            geometry_msgs::Pose target_pose;
+            target_pose.position.x = ui.txt_x_data_1->text().trimmed().toDouble();
+            target_pose.position.y = ui.txt_y_data_1->text().trimmed().toDouble();
+            target_pose.position.z = 300;
+            double rotate_x = 117*pi/180;
+            double rotate_y = (-90)*pi/180;
+            double rotate_z = (-117)*pi/180;
+
+          tf::Quaternion q;
+          q.setRPY(rotate_x,rotate_y,rotate_z);
+          target_pose.orientation.x = q.x();
+          target_pose.orientation.y = q.y();
+          target_pose.orientation.z = q.z();
+          target_pose.orientation.w = q.w();
+          const robot_state::JointModelGroup *joint_model_group = qnode.move_group->getCurrentState()->getJointModelGroup(qnode.PLANNING_GROUP);
+          robot_state::RobotStatePtr kinematic_state(new robot_state::RobotState(qnode.kinematic_model));
+          const std::vector<std::string> &joint_names = joint_model_group->getVariableNames();
+
+          found_ik = kinematic_state->setFromIK(joint_model_group, target_pose, 10, 0.01); //0.1ms
+
+          if (found_ik)
+          {
+            kinematic_state->copyJointGroupPositions(joint_model_group, joint_values);
+            double arr[9];
+            for (std::size_t i = 0; i < joint_names.size(); ++i)
+            {
+
+              ROS_INFO("Joint %s: %f", joint_names[i].c_str(), joint_values[i]);
+            }
+            //std::copy(joint_values.begin(),joint_values.end(),arr);
+
+
+
+            Moveit_Jointvalue_1 = QString::number(joint_values[0]*180/pi,'f',4).toDouble();
+            Moveit_Jointvalue_2 = QString::number(joint_values[1]*180/pi,'f',4).toDouble();
+            Moveit_Jointvalue_3 = QString::number(joint_values[4]*180/pi,'f',4).toDouble();
+            Moveit_Jointvalue_4 = QString::number(joint_values[7]*180/pi,'f',4).toDouble();
+            Moveit_Jointvalue_5 = QString::number(joint_values[8]*180/pi,'f',4).toDouble();
+            Moveit_Jointvalue_6 = QString::number(joint_values[9]*180/pi,'f',4).toDouble();
+
+            qnode.move_group->setPoseTarget(target_pose);
+          //  qnode.move_group->move();
+            QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(Moveit_Jointvalue_1).arg(Moveit_Jointvalue_2).arg(Moveit_Jointvalue_3).arg(Moveit_Jointvalue_4).arg(Moveit_Jointvalue_5).arg(Moveit_Jointvalue_6);
+            //QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(qnode.joint_values[0]).arg(qnode.joint_values[1])
+            //    .arg(qnode.joint_values[4]).arg(qnode.joint_values[7]).arg(qnode.joint_values[8]).arg(qnode.joint_values[9]);
+            ROS_INFO("joint1: %f",Moveit_Jointvalue_1);
+            ROS_INFO("joint2: %f",Moveit_Jointvalue_2);
+            ROS_INFO("joint3: %f",Moveit_Jointvalue_3);
+            ROS_INFO("joint4: %f",Moveit_Jointvalue_4);
+            ROS_INFO("joint5: %f",Moveit_Jointvalue_5);
+            ROS_INFO("joint6: %f",Moveit_Jointvalue_6);
+            QString msg = "Moving!";
+            tcpSocket->write(Joint_data.toLocal8Bit().constData());
+            ui.listWidget_Server_text->addItem(QString("%1").arg(Joint_data));
+            ui.listWidget_Server_text->scrollToBottom();
+
+            while(true)
+            {
+             if(complete_pose)
+                break;
+            }
+
+            ros::Duration(1).sleep();
+
+            complete_pose = false;
+            turn = 4;
+
+
+          }
+          else
+          {
+            ROS_INFO("Did not find IK solution");
+          }
+
+          break;
+        }
+
+        case 4:
+        {
+            geometry_msgs::Pose target_pose;
+            target_pose.position.x = 550;
+            target_pose.position.y = 0;
+            target_pose.position.z = 300;
+            double rotate_x = 117*pi/180;
+            double rotate_y = (-90)*pi/180;
+            double rotate_z = (-117)*pi/180;
+
+            tf::Quaternion q;
+            q.setRPY(rotate_x,rotate_y,rotate_z);
+            target_pose.orientation.x = q.x();
+            target_pose.orientation.y = q.y();
+            target_pose.orientation.z = q.z();
+            target_pose.orientation.w = q.w();
+            const robot_state::JointModelGroup *joint_model_group = qnode.move_group->getCurrentState()->getJointModelGroup(qnode.PLANNING_GROUP);
+            robot_state::RobotStatePtr kinematic_state(new robot_state::RobotState(qnode.kinematic_model));
+            const std::vector<std::string> &joint_names = joint_model_group->getVariableNames();
+
+            found_ik = kinematic_state->setFromIK(joint_model_group, target_pose, 10, 0.01); //0.1ms
+
+            if (found_ik)
+            {
+              kinematic_state->copyJointGroupPositions(joint_model_group, joint_values);
+              double arr[9];
+              for (std::size_t i = 0; i < joint_names.size(); ++i)
+              {
+
+                ROS_INFO("Joint %s: %f", joint_names[i].c_str(), joint_values[i]);
+              }
+              //std::copy(joint_values.begin(),joint_values.end(),arr);
+
+              Moveit_Jointvalue_1 = QString::number(joint_values[0]*180/pi,'f',4).toDouble();
+              Moveit_Jointvalue_2 = QString::number(joint_values[1]*180/pi,'f',4).toDouble();
+              Moveit_Jointvalue_3 = QString::number(joint_values[4]*180/pi,'f',4).toDouble();
+              Moveit_Jointvalue_4 = QString::number(joint_values[7]*180/pi,'f',4).toDouble();
+              Moveit_Jointvalue_5 = QString::number(joint_values[8]*180/pi,'f',4).toDouble();
+              Moveit_Jointvalue_6 = QString::number(joint_values[9]*180/pi,'f',4).toDouble();
+
+              qnode.move_group->setPoseTarget(target_pose);
+           //   qnode.move_group->move();
+              QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(Moveit_Jointvalue_1).arg(Moveit_Jointvalue_2).arg(Moveit_Jointvalue_3).arg(Moveit_Jointvalue_4).arg(Moveit_Jointvalue_5).arg(Moveit_Jointvalue_6);
+              //QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(qnode.joint_values[0]).arg(qnode.joint_values[1])
+              //    .arg(qnode.joint_values[4]).arg(qnode.joint_values[7]).arg(qnode.joint_values[8]).arg(qnode.joint_values[9]);
+              ROS_INFO("joint1: %f",Moveit_Jointvalue_1);
+              ROS_INFO("joint2: %f",Moveit_Jointvalue_2);
+              ROS_INFO("joint3: %f",Moveit_Jointvalue_3);
+              ROS_INFO("joint4: %f",Moveit_Jointvalue_4);
+              ROS_INFO("joint5: %f",Moveit_Jointvalue_5);
+              ROS_INFO("joint6: %f",Moveit_Jointvalue_6);
+              QString msg = "Moving!";
+              tcpSocket->write(Joint_data.toLocal8Bit().constData());
+              ui.listWidget_Server_text->addItem(QString("%1").arg(Joint_data));
+              ui.listWidget_Server_text->scrollToBottom();
+
+              while(true)
+              {
+               if(complete_pose)
+                  break;
+              }
+
+              ros::Duration(2).sleep();
+
+              complete_pose = false;
+              turn = 0;
+              i++;
+
+            }
+            else
+            {
+              ROS_INFO("Did not find IK solution");
+            }
+
+            break;
+          }
+     }
+   }
+}
+
+
+void qtros::MainWindow::on_btn_test_move_clicked() //here test
+{
+
+    boost::thread th3(&MainWindow::_190714_trakint_test, this);
 
 }
 
@@ -691,7 +973,8 @@ void qtros::MainWindow::on_btnDetectPose_clicked() //here2
       Moveit_Jointvalue_6 = QString::number(joint_values[9]*180/pi,'f',4).toDouble();
 
       qnode.move_group->setPoseTarget(target_pose);
-   //   qnode.move_group->move();
+      qnode.move_group->move();
+
       QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(Moveit_Jointvalue_1).arg(Moveit_Jointvalue_2).arg(Moveit_Jointvalue_3).arg(Moveit_Jointvalue_4).arg(Moveit_Jointvalue_5).arg(Moveit_Jointvalue_6);
       //QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(qnode.joint_values[0]).arg(qnode.joint_values[1])
       //    .arg(qnode.joint_values[4]).arg(qnode.joint_values[7]).arg(qnode.joint_values[8]).arg(qnode.joint_values[9]);
@@ -1024,6 +1307,36 @@ void qtros::MainWindow::joint_and_move(double joint_1, double joint_2, double jo
      QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(joint_group_positions[0]*180/pi).arg(joint_group_positions[1]*180/pi).arg(joint_group_positions[4]*180/pi)
          .arg(joint_group_positions[7]*180/pi).arg(joint_group_positions[8]*180/pi).arg(joint_group_positions[9]*180/pi);
     tcpSocket->write(Joint_data.toLocal8Bit().constData());
+}
+
+void qtros::MainWindow::on_btn_fk_clicked()
+{
+
+    // Get pose & orientation
+    qnode.move_group->setEndEffectorLink("gripper");
+    geometry_msgs::PoseStamped current_pose =    qnode.move_group->getCurrentPose();
+
+    // the incoming geometry_msgs::Quaternion is transformed to a tf::Quaterion
+    tf::Quaternion quat;
+
+    //////////////
+    tf::quaternionMsgToTF( current_pose.pose.orientation, quat);
+
+    // the tf::Quaternion has a method to acess roll pitch and yaw
+    double roll, pitch, yaw;
+    tf::Matrix3x3(quat).getRPY(roll, pitch, yaw);
+
+    // the found angles are written in a geometry_msgs::Vector3
+    geometry_msgs::Vector3 rpy;
+    rpy.x = roll;
+    rpy.y = pitch;
+    rpy.z = yaw;
+
+    /////////////////
+
+    ROS_INFO_STREAM(current_pose.pose.position.x <<"," << current_pose.pose.position.y <<"," << current_pose.pose.position.z <<"\n" <<
+                    rpy.x<<"," << rpy.y<<"," << rpy.z);
+
 }
 
 void qtros::MainWindow::pick_and_place_task()
@@ -1569,7 +1882,7 @@ void qtros::MainWindow::on_btnpixel_check_clicked()
 // used test
 void qtros::MainWindow::on_btnRepeat_clicked()
 {
-  boost::thread th3(&MainWindow::Repeat, this);
+  //boost::thread th3(&MainWindow::Repeat, this);
 }
 void qtros::MainWindow::Repeat() //here
 {
@@ -1577,7 +1890,7 @@ void qtros::MainWindow::Repeat() //here
   int i = 0;
   complete_pose = false;
 
-  while(i<31)
+  while(i<1)
   {
       switch (turn) {
       case 0:
@@ -1990,6 +2303,914 @@ void qtros::MainWindow::Repeat() //here
 
     }
   }
+}
+
+int tracking_count;
+
+void qtros::MainWindow::_190714_trakint_test()
+{
+
+    geometry_msgs::Pose target_pose;
+
+    point_enclosure_x = qnode._labeledCenter_calculate_x+10;
+
+    target_pose.position.x = point_enclosure_x;
+    target_pose.position.y = 0;
+    target_pose.position.z = 160;
+    double rotate_x = _task_roll*pi/180;
+    double rotate_y = _task_pitch*pi/180;
+    double rotate_z = _task_yaw*pi/180;
+
+    tf::Quaternion q;
+    q.setRPY(rotate_x,rotate_y,rotate_z);
+    target_pose.orientation.x = q.x();
+    target_pose.orientation.y = q.y();
+    target_pose.orientation.z = q.z();
+    target_pose.orientation.w = q.w();
+    const robot_state::JointModelGroup *joint_model_group = qnode.move_group->getCurrentState()->getJointModelGroup(qnode.PLANNING_GROUP);
+    robot_state::RobotStatePtr kinematic_state(new robot_state::RobotState(qnode.kinematic_model));
+    const std::vector<std::string> &joint_names = joint_model_group->getVariableNames();
+
+    found_ik = kinematic_state->setFromIK(joint_model_group, target_pose, 10, 0.01); //0.1ms
+
+    if (found_ik)
+    {
+      kinematic_state->copyJointGroupPositions(joint_model_group, joint_values);
+      double arr[9];
+      for (std::size_t i = 0; i < joint_names.size(); ++i)
+      {
+
+        ROS_INFO("Joint %s: %f", joint_names[i].c_str(), joint_values[i]);
+      }
+      //std::copy(joint_values.begin(),joint_values.end(),arr);
+
+
+
+      Moveit_Jointvalue_1 = QString::number(joint_values[0]*180/pi,'f',4).toDouble();
+      Moveit_Jointvalue_2 = QString::number(joint_values[1]*180/pi,'f',4).toDouble();
+      Moveit_Jointvalue_3 = QString::number(joint_values[4]*180/pi,'f',4).toDouble();
+      Moveit_Jointvalue_4 = QString::number(joint_values[7]*180/pi,'f',4).toDouble();
+      Moveit_Jointvalue_5 = QString::number(joint_values[8]*180/pi,'f',4).toDouble();
+      Moveit_Jointvalue_6 = QString::number(joint_values[9]*180/pi,'f',4).toDouble();
+
+      qnode.move_group->setPoseTarget(target_pose);
+   //   qnode.move_group->move();
+      QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(Moveit_Jointvalue_1).arg(Moveit_Jointvalue_2).arg(Moveit_Jointvalue_3).arg(Moveit_Jointvalue_4).arg(Moveit_Jointvalue_5).arg(Moveit_Jointvalue_6);
+      //QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(qnode.joint_values[0]).arg(qnode.joint_values[1])
+      //    .arg(qnode.joint_values[4]).arg(qnode.joint_values[7]).arg(qnode.joint_values[8]).arg(qnode.joint_values[9]);
+      ROS_INFO("joint1: %f",Moveit_Jointvalue_1);
+      ROS_INFO("joint2: %f",Moveit_Jointvalue_2);
+      ROS_INFO("joint3: %f",Moveit_Jointvalue_3);
+      ROS_INFO("joint4: %f",Moveit_Jointvalue_4);
+      ROS_INFO("joint5: %f",Moveit_Jointvalue_5);
+      ROS_INFO("joint6: %f",Moveit_Jointvalue_6);
+      QString msg = "Moving!";
+      tcpSocket->write(Joint_data.toLocal8Bit().constData());
+      ui.listWidget_Server_text->addItem(QString("%1").arg(Joint_data));
+      ui.listWidget_Server_text->scrollToBottom();
+
+      while(true)
+      {
+       if(complete_pose)
+          break;
+      }
+
+      ros::Duration(1).sleep();
+      complete_pose = false;
+      tracking_count++;
+
+
+      Gripper_Open();
+      ros::Duration(1).sleep();
+
+      ROS_INFO("Count: %d ",tracking_count);
+
+    }
+
+    while (true) {
+
+        if(qnode._labeledCenter_calculate_y < 500)
+        {
+            _190714_trakint_test1();
+            break;
+        }
+
+    }
+
+    avg_velocity = 0;
+    vel_check_count = 0;
+
+    while (true) {
+
+        avg_velocity = avg_velocity + qnode.velocity_enclosure;
+        vel_check_count++;
+
+        if(qnode._labeledCenter_calculate_y < (avg_velocity/vel_check_count) * 3.23)
+        {
+            _190714_trakint_test2();
+            break;
+        }
+
+    }
+
+    _190714_trakint_test3();
+    usleep(300000);
+
+    _190714_trakint_test_sona_500x300_point();
+    usleep(300000);
+
+    _190714_trakint_test_sona_700x300_point();
+    usleep(300000);
+
+    _190714_trakint_test_sona_700x200_point();
+    usleep(150000);
+    Gripper_Open();
+    usleep(150000);
+
+    _190714_trakint_test_sona_700x300_point();
+    usleep(300000);
+
+    _190714_trakint_test_sona_500x300_point();
+    usleep(1000000);
+
+    _190714_trakint_test_sona_700x300_point();
+    usleep(300000);
+
+    _190714_trakint_test_sona_700x200_point();
+    usleep(150000);
+    Gripper_Close();
+    usleep(150000);
+
+    _190714_trakint_test_sona_700x300_point();
+    usleep(300000);
+
+    _190714_trakint_test_sona_500x300_point();
+    usleep(300000);
+
+    _190714_trakint_test3();
+    usleep(300000);
+
+    _190714_trakint_test4();
+    usleep(10000);
+    Gripper_Open();
+    usleep(10000);
+
+    _190714_trakint_test3();
+    usleep(300000);
+
+
+
+}
+
+void qtros::MainWindow::_190714_trakint_test1()
+{
+
+    geometry_msgs::Pose target_pose;
+
+    point_enclosure_x = qnode._labeledCenter_calculate_x+15;
+
+    target_pose.position.x = point_enclosure_x;
+    target_pose.position.y = 0;
+    target_pose.position.z = 160;
+    double rotate_x = _task_roll*pi/180;
+    double rotate_y = _task_pitch*pi/180;
+    double rotate_z = _task_yaw*pi/180;
+
+    tf::Quaternion q;
+    q.setRPY(rotate_x,rotate_y,rotate_z);
+    target_pose.orientation.x = q.x();
+    target_pose.orientation.y = q.y();
+    target_pose.orientation.z = q.z();
+    target_pose.orientation.w = q.w();
+    const robot_state::JointModelGroup *joint_model_group = qnode.move_group->getCurrentState()->getJointModelGroup(qnode.PLANNING_GROUP);
+    robot_state::RobotStatePtr kinematic_state(new robot_state::RobotState(qnode.kinematic_model));
+    const std::vector<std::string> &joint_names = joint_model_group->getVariableNames();
+
+    found_ik = kinematic_state->setFromIK(joint_model_group, target_pose, 10, 0.01); //0.1ms
+
+    if (found_ik)
+    {
+      kinematic_state->copyJointGroupPositions(joint_model_group, joint_values);
+      double arr[9];
+      for (std::size_t i = 0; i < joint_names.size(); ++i)
+      {
+
+        ROS_INFO("Joint %s: %f", joint_names[i].c_str(), joint_values[i]);
+      }
+      //std::copy(joint_values.begin(),joint_values.end(),arr);
+
+
+
+      Moveit_Jointvalue_1 = QString::number(joint_values[0]*180/pi,'f',4).toDouble();
+      Moveit_Jointvalue_2 = QString::number(joint_values[1]*180/pi,'f',4).toDouble();
+      Moveit_Jointvalue_3 = QString::number(joint_values[4]*180/pi,'f',4).toDouble();
+      Moveit_Jointvalue_4 = QString::number(joint_values[7]*180/pi,'f',4).toDouble();
+      Moveit_Jointvalue_5 = QString::number(joint_values[8]*180/pi,'f',4).toDouble();
+      Moveit_Jointvalue_6 = QString::number(joint_values[9]*180/pi,'f',4).toDouble();
+
+      qnode.move_group->setPoseTarget(target_pose);
+   //   qnode.move_group->move();
+      QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(Moveit_Jointvalue_1).arg(Moveit_Jointvalue_2).arg(Moveit_Jointvalue_3).arg(Moveit_Jointvalue_4).arg(Moveit_Jointvalue_5).arg(Moveit_Jointvalue_6);
+      //QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(qnode.joint_values[0]).arg(qnode.joint_values[1])
+      //    .arg(qnode.joint_values[4]).arg(qnode.joint_values[7]).arg(qnode.joint_values[8]).arg(qnode.joint_values[9]);
+      ROS_INFO("joint1: %f",Moveit_Jointvalue_1);
+      ROS_INFO("joint2: %f",Moveit_Jointvalue_2);
+      ROS_INFO("joint3: %f",Moveit_Jointvalue_3);
+      ROS_INFO("joint4: %f",Moveit_Jointvalue_4);
+      ROS_INFO("joint5: %f",Moveit_Jointvalue_5);
+      ROS_INFO("joint6: %f",Moveit_Jointvalue_6);
+      QString msg = "Moving!";
+      tcpSocket->write(Joint_data.toLocal8Bit().constData());
+      ui.listWidget_Server_text->addItem(QString("%1").arg(Joint_data));
+      ui.listWidget_Server_text->scrollToBottom();
+
+      while(true)
+      {
+       if(complete_pose)
+          break;
+      }
+
+      ros::Duration(1).sleep();
+      complete_pose = false;
+    }
+}
+
+void qtros::MainWindow::_190714_trakint_test2()
+{
+    double robot_move_time_start = ros::Time::now().toSec();
+
+    geometry_msgs::Pose target_pose;
+    target_pose.position.x = point_enclosure_x;
+    target_pose.position.y = 0;
+    target_pose.position.z = 138;
+    double rotate_x = _task_roll*pi/180;
+    double rotate_y = _task_pitch*pi/180;
+    double rotate_z = _task_yaw*pi/180;
+
+    tf::Quaternion q;
+
+    q.setRPY(rotate_x,rotate_y,rotate_z);
+    target_pose.orientation.x = q.x();
+    target_pose.orientation.y = q.y();
+    target_pose.orientation.z = q.z();
+    target_pose.orientation.w = q.w();
+
+    const robot_state::JointModelGroup *joint_model_group = qnode.move_group->getCurrentState()->getJointModelGroup(qnode.PLANNING_GROUP);
+    robot_state::RobotStatePtr kinematic_state(new robot_state::RobotState(qnode.kinematic_model));
+    const std::vector<std::string> &joint_names = joint_model_group->getVariableNames();
+
+    found_ik = kinematic_state->setFromIK(joint_model_group, target_pose, 10, 0.01); //0.1ms
+
+    if (found_ik)
+    {
+      kinematic_state->copyJointGroupPositions(joint_model_group, joint_values);
+      double arr[9];
+      for (std::size_t i = 0; i < joint_names.size(); ++i)
+      {
+
+        ROS_INFO("Joint %s: %f", joint_names[i].c_str(), joint_values[i]);
+      }
+      //std::copy(joint_values.begin(),joint_values.end(),arr);
+
+      Moveit_Jointvalue_1 = QString::number(joint_values[0]*180/pi,'f',4).toDouble();
+      Moveit_Jointvalue_2 = QString::number(joint_values[1]*180/pi,'f',4).toDouble();
+      Moveit_Jointvalue_3 = QString::number(joint_values[4]*180/pi,'f',4).toDouble();
+      Moveit_Jointvalue_4 = QString::number(joint_values[7]*180/pi,'f',4).toDouble();
+      Moveit_Jointvalue_5 = QString::number(joint_values[8]*180/pi,'f',4).toDouble();
+      Moveit_Jointvalue_6 = QString::number(joint_values[9]*180/pi,'f',4).toDouble();
+
+      qnode.move_group->setPoseTarget(target_pose);
+   //   qnode.move_group->move();
+      QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(Moveit_Jointvalue_1).arg(Moveit_Jointvalue_2).arg(Moveit_Jointvalue_3).arg(Moveit_Jointvalue_4).arg(Moveit_Jointvalue_5).arg(Moveit_Jointvalue_6);
+      //QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(qnode.joint_values[0]).arg(qnode.joint_values[1])
+      //    .arg(qnode.joint_values[4]).arg(qnode.joint_values[7]).arg(qnode.joint_values[8]).arg(qnode.joint_values[9]);
+      ROS_INFO("joint1: %f",Moveit_Jointvalue_1);
+      ROS_INFO("joint2: %f",Moveit_Jointvalue_2);
+      ROS_INFO("joint3: %f",Moveit_Jointvalue_3);
+      ROS_INFO("joint4: %f",Moveit_Jointvalue_4);
+      ROS_INFO("joint5: %f",Moveit_Jointvalue_5);
+      ROS_INFO("joint6: %f",Moveit_Jointvalue_6);
+      QString msg = "Moving!";
+      tcpSocket->write(Joint_data.toLocal8Bit().constData());
+      ui.listWidget_Server_text->addItem(QString("%1").arg(Joint_data));
+      ui.listWidget_Server_text->scrollToBottom();
+
+      while(true)
+      {
+       if(complete_pose)
+          break;
+      }
+
+      ros::Duration(1).sleep();
+
+      complete_pose = false;
+
+      Gripper_Close();
+      double robot_move_time_stop = ros::Time::now().toSec();
+
+      ros::Duration(1).sleep();
+      tracking_count++;
+
+      double robot_move_time = robot_move_time_stop - robot_move_time_start;
+
+      ROS_INFO("z move 100mm -> time : %f ",robot_move_time);
+
+      ROS_INFO("Count: %d ",tracking_count);
+
+    }
+}
+
+void qtros::MainWindow::_190714_trakint_test3()
+{
+
+    geometry_msgs::Pose target_pose;
+    target_pose.position.x = point_enclosure_x;
+    target_pose.position.y = 0;
+    target_pose.position.z = 300;
+    double rotate_x = _task_roll*pi/180;
+    double rotate_y = _task_pitch*pi/180;
+    double rotate_z = _task_yaw*pi/180;
+
+    tf::Quaternion q;
+
+    q.setRPY(rotate_x,rotate_y,rotate_z);
+    target_pose.orientation.x = q.x();
+    target_pose.orientation.y = q.y();
+    target_pose.orientation.z = q.z();
+    target_pose.orientation.w = q.w();
+
+    const robot_state::JointModelGroup *joint_model_group = qnode.move_group->getCurrentState()->getJointModelGroup(qnode.PLANNING_GROUP);
+    robot_state::RobotStatePtr kinematic_state(new robot_state::RobotState(qnode.kinematic_model));
+    const std::vector<std::string> &joint_names = joint_model_group->getVariableNames();
+
+    found_ik = kinematic_state->setFromIK(joint_model_group, target_pose, 10, 0.01); //0.1ms
+
+    if (found_ik)
+    {
+      kinematic_state->copyJointGroupPositions(joint_model_group, joint_values);
+      double arr[9];
+      for (std::size_t i = 0; i < joint_names.size(); ++i)
+      {
+
+        ROS_INFO("Joint %s: %f", joint_names[i].c_str(), joint_values[i]);
+      }
+      //std::copy(joint_values.begin(),joint_values.end(),arr);
+
+      Moveit_Jointvalue_1 = QString::number(joint_values[0]*180/pi,'f',4).toDouble();
+      Moveit_Jointvalue_2 = QString::number(joint_values[1]*180/pi,'f',4).toDouble();
+      Moveit_Jointvalue_3 = QString::number(joint_values[4]*180/pi,'f',4).toDouble();
+      Moveit_Jointvalue_4 = QString::number(joint_values[7]*180/pi,'f',4).toDouble();
+      Moveit_Jointvalue_5 = QString::number(joint_values[8]*180/pi,'f',4).toDouble();
+      Moveit_Jointvalue_6 = QString::number(joint_values[9]*180/pi,'f',4).toDouble();
+
+      qnode.move_group->setPoseTarget(target_pose);
+   //   qnode.move_group->move();
+      QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(Moveit_Jointvalue_1).arg(Moveit_Jointvalue_2).arg(Moveit_Jointvalue_3).arg(Moveit_Jointvalue_4).arg(Moveit_Jointvalue_5).arg(Moveit_Jointvalue_6);
+      //QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(qnode.joint_values[0]).arg(qnode.joint_values[1])
+      //    .arg(qnode.joint_values[4]).arg(qnode.joint_values[7]).arg(qnode.joint_values[8]).arg(qnode.joint_values[9]);
+      ROS_INFO("joint1: %f",Moveit_Jointvalue_1);
+      ROS_INFO("joint2: %f",Moveit_Jointvalue_2);
+      ROS_INFO("joint3: %f",Moveit_Jointvalue_3);
+      ROS_INFO("joint4: %f",Moveit_Jointvalue_4);
+      ROS_INFO("joint5: %f",Moveit_Jointvalue_5);
+      ROS_INFO("joint6: %f",Moveit_Jointvalue_6);
+      QString msg = "Moving!";
+      tcpSocket->write(Joint_data.toLocal8Bit().constData());
+      ui.listWidget_Server_text->addItem(QString("%1").arg(Joint_data));
+      ui.listWidget_Server_text->scrollToBottom();
+
+      while(true)
+      {
+       if(complete_pose)
+          break;
+      }
+
+      ros::Duration(1).sleep();
+
+      complete_pose = false;
+
+
+    }
+}
+
+void qtros::MainWindow::_190714_trakint_test4()
+{
+
+    geometry_msgs::Pose target_pose;
+    target_pose.position.x = point_enclosure_x;
+    target_pose.position.y = 0;
+    target_pose.position.z = 150;
+    double rotate_x = _task_roll*pi/180;
+    double rotate_y = _task_pitch*pi/180;
+    double rotate_z = _task_yaw*pi/180;
+
+    tf::Quaternion q;
+
+    q.setRPY(rotate_x,rotate_y,rotate_z);
+    target_pose.orientation.x = q.x();
+    target_pose.orientation.y = q.y();
+    target_pose.orientation.z = q.z();
+    target_pose.orientation.w = q.w();
+
+    const robot_state::JointModelGroup *joint_model_group = qnode.move_group->getCurrentState()->getJointModelGroup(qnode.PLANNING_GROUP);
+    robot_state::RobotStatePtr kinematic_state(new robot_state::RobotState(qnode.kinematic_model));
+    const std::vector<std::string> &joint_names = joint_model_group->getVariableNames();
+
+    found_ik = kinematic_state->setFromIK(joint_model_group, target_pose, 10, 0.01); //0.1ms
+
+    if (found_ik)
+    {
+      kinematic_state->copyJointGroupPositions(joint_model_group, joint_values);
+      double arr[9];
+      for (std::size_t i = 0; i < joint_names.size(); ++i)
+      {
+
+        ROS_INFO("Joint %s: %f", joint_names[i].c_str(), joint_values[i]);
+      }
+      //std::copy(joint_values.begin(),joint_values.end(),arr);
+
+      Moveit_Jointvalue_1 = QString::number(joint_values[0]*180/pi,'f',4).toDouble();
+      Moveit_Jointvalue_2 = QString::number(joint_values[1]*180/pi,'f',4).toDouble();
+      Moveit_Jointvalue_3 = QString::number(joint_values[4]*180/pi,'f',4).toDouble();
+      Moveit_Jointvalue_4 = QString::number(joint_values[7]*180/pi,'f',4).toDouble();
+      Moveit_Jointvalue_5 = QString::number(joint_values[8]*180/pi,'f',4).toDouble();
+      Moveit_Jointvalue_6 = QString::number(joint_values[9]*180/pi,'f',4).toDouble();
+
+      qnode.move_group->setPoseTarget(target_pose);
+   //   qnode.move_group->move();
+      QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(Moveit_Jointvalue_1).arg(Moveit_Jointvalue_2).arg(Moveit_Jointvalue_3).arg(Moveit_Jointvalue_4).arg(Moveit_Jointvalue_5).arg(Moveit_Jointvalue_6);
+      //QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(qnode.joint_values[0]).arg(qnode.joint_values[1])
+      //    .arg(qnode.joint_values[4]).arg(qnode.joint_values[7]).arg(qnode.joint_values[8]).arg(qnode.joint_values[9]);
+      ROS_INFO("joint1: %f",Moveit_Jointvalue_1);
+      ROS_INFO("joint2: %f",Moveit_Jointvalue_2);
+      ROS_INFO("joint3: %f",Moveit_Jointvalue_3);
+      ROS_INFO("joint4: %f",Moveit_Jointvalue_4);
+      ROS_INFO("joint5: %f",Moveit_Jointvalue_5);
+      ROS_INFO("joint6: %f",Moveit_Jointvalue_6);
+      QString msg = "Moving!";
+      tcpSocket->write(Joint_data.toLocal8Bit().constData());
+      ui.listWidget_Server_text->addItem(QString("%1").arg(Joint_data));
+      ui.listWidget_Server_text->scrollToBottom();
+
+      while(true)
+      {
+       if(complete_pose)
+          break;
+      }
+
+      ros::Duration(1).sleep();
+
+      complete_pose = false;
+
+
+    }
+}
+
+
+void qtros::MainWindow::_190714_trakint_test_sona_500x300_point()
+{
+
+    geometry_msgs::Pose target_pose;
+
+    target_pose.position.x = 0;
+    target_pose.position.y = -500;
+    target_pose.position.z = 300;
+    double rotate_x = _task_sona_point_roll*pi/180;
+    double rotate_y = _task_sona_point_pitch*pi/180;
+    double rotate_z = _task_sona_point_yaw*pi/180;
+
+    tf::Quaternion q;
+    q.setRPY(rotate_x,rotate_y,rotate_z);
+    target_pose.orientation.x = q.x();
+    target_pose.orientation.y = q.y();
+    target_pose.orientation.z = q.z();
+    target_pose.orientation.w = q.w();
+    const robot_state::JointModelGroup *joint_model_group = qnode.move_group->getCurrentState()->getJointModelGroup(qnode.PLANNING_GROUP);
+    robot_state::RobotStatePtr kinematic_state(new robot_state::RobotState(qnode.kinematic_model));
+    const std::vector<std::string> &joint_names = joint_model_group->getVariableNames();
+
+    found_ik = kinematic_state->setFromIK(joint_model_group, target_pose, 10, 0.01); //0.1ms
+
+    if (found_ik)
+    {
+      kinematic_state->copyJointGroupPositions(joint_model_group, joint_values);
+      double arr[9];
+      for (std::size_t i = 0; i < joint_names.size(); ++i)
+      {
+
+        ROS_INFO("Joint %s: %f", joint_names[i].c_str(), joint_values[i]);
+      }
+      //std::copy(joint_values.begin(),joint_values.end(),arr);
+
+
+
+      Moveit_Jointvalue_1 = QString::number(joint_values[0]*180/pi,'f',4).toDouble();
+      Moveit_Jointvalue_2 = QString::number(joint_values[1]*180/pi,'f',4).toDouble();
+      Moveit_Jointvalue_3 = QString::number(joint_values[4]*180/pi,'f',4).toDouble();
+      Moveit_Jointvalue_4 = QString::number(joint_values[7]*180/pi,'f',4).toDouble();
+      Moveit_Jointvalue_5 = QString::number(joint_values[8]*180/pi,'f',4).toDouble();
+      Moveit_Jointvalue_6 = QString::number(joint_values[9]*180/pi,'f',4).toDouble();
+
+      qnode.move_group->setPoseTarget(target_pose);
+   //   qnode.move_group->move();
+      QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(Moveit_Jointvalue_1).arg(Moveit_Jointvalue_2).arg(Moveit_Jointvalue_3).arg(Moveit_Jointvalue_4).arg(Moveit_Jointvalue_5).arg(Moveit_Jointvalue_6);
+      //QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(qnode.joint_values[0]).arg(qnode.joint_values[1])
+      //    .arg(qnode.joint_values[4]).arg(qnode.joint_values[7]).arg(qnode.joint_values[8]).arg(qnode.joint_values[9]);
+      ROS_INFO("joint1: %f",Moveit_Jointvalue_1);
+      ROS_INFO("joint2: %f",Moveit_Jointvalue_2);
+      ROS_INFO("joint3: %f",Moveit_Jointvalue_3);
+      ROS_INFO("joint4: %f",Moveit_Jointvalue_4);
+      ROS_INFO("joint5: %f",Moveit_Jointvalue_5);
+      ROS_INFO("joint6: %f",Moveit_Jointvalue_6);
+      QString msg = "Moving!";
+      tcpSocket->write(Joint_data.toLocal8Bit().constData());
+      ui.listWidget_Server_text->addItem(QString("%1").arg(Joint_data));
+      ui.listWidget_Server_text->scrollToBottom();
+
+      while(true)
+      {
+       if(complete_pose)
+          break;
+      }
+
+      ros::Duration(1).sleep();
+      complete_pose = false;
+    }
+}
+
+void qtros::MainWindow::_190714_trakint_test_sona_700x300_point()
+{
+
+    geometry_msgs::Pose target_pose;
+
+    target_pose.position.x = 0;
+    target_pose.position.y = -700;
+    target_pose.position.z = 300;
+    double rotate_x = _task_sona_point_roll*pi/180;
+    double rotate_y = _task_sona_point_pitch*pi/180;
+    double rotate_z = _task_sona_point_yaw*pi/180;
+
+    tf::Quaternion q;
+    q.setRPY(rotate_x,rotate_y,rotate_z);
+    target_pose.orientation.x = q.x();
+    target_pose.orientation.y = q.y();
+    target_pose.orientation.z = q.z();
+    target_pose.orientation.w = q.w();
+    const robot_state::JointModelGroup *joint_model_group = qnode.move_group->getCurrentState()->getJointModelGroup(qnode.PLANNING_GROUP);
+    robot_state::RobotStatePtr kinematic_state(new robot_state::RobotState(qnode.kinematic_model));
+    const std::vector<std::string> &joint_names = joint_model_group->getVariableNames();
+
+    found_ik = kinematic_state->setFromIK(joint_model_group, target_pose, 10, 0.01); //0.1ms
+
+    if (found_ik)
+    {
+      kinematic_state->copyJointGroupPositions(joint_model_group, joint_values);
+      double arr[9];
+      for (std::size_t i = 0; i < joint_names.size(); ++i)
+      {
+
+        ROS_INFO("Joint %s: %f", joint_names[i].c_str(), joint_values[i]);
+      }
+      //std::copy(joint_values.begin(),joint_values.end(),arr);
+
+
+
+      Moveit_Jointvalue_1 = QString::number(joint_values[0]*180/pi,'f',4).toDouble();
+      Moveit_Jointvalue_2 = QString::number(joint_values[1]*180/pi,'f',4).toDouble();
+      Moveit_Jointvalue_3 = QString::number(joint_values[4]*180/pi,'f',4).toDouble();
+      Moveit_Jointvalue_4 = QString::number(joint_values[7]*180/pi,'f',4).toDouble();
+      Moveit_Jointvalue_5 = QString::number(joint_values[8]*180/pi,'f',4).toDouble();
+      Moveit_Jointvalue_6 = QString::number(joint_values[9]*180/pi,'f',4).toDouble();
+
+      qnode.move_group->setPoseTarget(target_pose);
+   //   qnode.move_group->move();
+      QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(Moveit_Jointvalue_1).arg(Moveit_Jointvalue_2).arg(Moveit_Jointvalue_3).arg(Moveit_Jointvalue_4).arg(Moveit_Jointvalue_5).arg(Moveit_Jointvalue_6);
+      //QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(qnode.joint_values[0]).arg(qnode.joint_values[1])
+      //    .arg(qnode.joint_values[4]).arg(qnode.joint_values[7]).arg(qnode.joint_values[8]).arg(qnode.joint_values[9]);
+      ROS_INFO("joint1: %f",Moveit_Jointvalue_1);
+      ROS_INFO("joint2: %f",Moveit_Jointvalue_2);
+      ROS_INFO("joint3: %f",Moveit_Jointvalue_3);
+      ROS_INFO("joint4: %f",Moveit_Jointvalue_4);
+      ROS_INFO("joint5: %f",Moveit_Jointvalue_5);
+      ROS_INFO("joint6: %f",Moveit_Jointvalue_6);
+      QString msg = "Moving!";
+      tcpSocket->write(Joint_data.toLocal8Bit().constData());
+      ui.listWidget_Server_text->addItem(QString("%1").arg(Joint_data));
+      ui.listWidget_Server_text->scrollToBottom();
+
+      while(true)
+      {
+       if(complete_pose)
+          break;
+      }
+
+      ros::Duration(1).sleep();
+      complete_pose = false;
+    }
+}
+
+void qtros::MainWindow::_190714_trakint_test_sona_700x200_point()
+{
+
+    geometry_msgs::Pose target_pose;
+
+    target_pose.position.x = 0;
+    target_pose.position.y = -700;
+    target_pose.position.z = 200;
+    double rotate_x = _task_sona_point_roll*pi/180;
+    double rotate_y = _task_sona_point_pitch*pi/180;
+    double rotate_z = _task_sona_point_yaw*pi/180;
+
+    tf::Quaternion q;
+    q.setRPY(rotate_x,rotate_y,rotate_z);
+    target_pose.orientation.x = q.x();
+    target_pose.orientation.y = q.y();
+    target_pose.orientation.z = q.z();
+    target_pose.orientation.w = q.w();
+    const robot_state::JointModelGroup *joint_model_group = qnode.move_group->getCurrentState()->getJointModelGroup(qnode.PLANNING_GROUP);
+    robot_state::RobotStatePtr kinematic_state(new robot_state::RobotState(qnode.kinematic_model));
+    const std::vector<std::string> &joint_names = joint_model_group->getVariableNames();
+
+    found_ik = kinematic_state->setFromIK(joint_model_group, target_pose, 10, 0.01); //0.1ms
+
+    if (found_ik)
+    {
+      kinematic_state->copyJointGroupPositions(joint_model_group, joint_values);
+      double arr[9];
+      for (std::size_t i = 0; i < joint_names.size(); ++i)
+      {
+
+        ROS_INFO("Joint %s: %f", joint_names[i].c_str(), joint_values[i]);
+      }
+      //std::copy(joint_values.begin(),joint_values.end(),arr);
+
+
+
+      Moveit_Jointvalue_1 = QString::number(joint_values[0]*180/pi,'f',4).toDouble();
+      Moveit_Jointvalue_2 = QString::number(joint_values[1]*180/pi,'f',4).toDouble();
+      Moveit_Jointvalue_3 = QString::number(joint_values[4]*180/pi,'f',4).toDouble();
+      Moveit_Jointvalue_4 = QString::number(joint_values[7]*180/pi,'f',4).toDouble();
+      Moveit_Jointvalue_5 = QString::number(joint_values[8]*180/pi,'f',4).toDouble();
+      Moveit_Jointvalue_6 = QString::number(joint_values[9]*180/pi,'f',4).toDouble();
+
+      qnode.move_group->setPoseTarget(target_pose);
+   //   qnode.move_group->move();
+      QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(Moveit_Jointvalue_1).arg(Moveit_Jointvalue_2).arg(Moveit_Jointvalue_3).arg(Moveit_Jointvalue_4).arg(Moveit_Jointvalue_5).arg(Moveit_Jointvalue_6);
+      //QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(qnode.joint_values[0]).arg(qnode.joint_values[1])
+      //    .arg(qnode.joint_values[4]).arg(qnode.joint_values[7]).arg(qnode.joint_values[8]).arg(qnode.joint_values[9]);
+      ROS_INFO("joint1: %f",Moveit_Jointvalue_1);
+      ROS_INFO("joint2: %f",Moveit_Jointvalue_2);
+      ROS_INFO("joint3: %f",Moveit_Jointvalue_3);
+      ROS_INFO("joint4: %f",Moveit_Jointvalue_4);
+      ROS_INFO("joint5: %f",Moveit_Jointvalue_5);
+      ROS_INFO("joint6: %f",Moveit_Jointvalue_6);
+      QString msg = "Moving!";
+      tcpSocket->write(Joint_data.toLocal8Bit().constData());
+      ui.listWidget_Server_text->addItem(QString("%1").arg(Joint_data));
+      ui.listWidget_Server_text->scrollToBottom();
+
+      while(true)
+      {
+       if(complete_pose)
+          break;
+      }
+
+      ros::Duration(1).sleep();
+      complete_pose = false;
+    }
+}
+
+
+
+void qtros::MainWindow::tracking_test1()
+{
+    geometry_msgs::Pose target_pose;
+    target_pose.position.x = qnode._labeledCenter_calculate_x;
+    target_pose.position.y = 50;
+    target_pose.position.z = 300;
+    double rotate_x = 117*pi/180;
+    double rotate_y = (-90)*pi/180;
+    double rotate_z = (-117)*pi/180;
+
+    tf::Quaternion q;
+    q.setRPY(rotate_x,rotate_y,rotate_z);
+    target_pose.orientation.x = q.x();
+    target_pose.orientation.y = q.y();
+    target_pose.orientation.z = q.z();
+    target_pose.orientation.w = q.w();
+    const robot_state::JointModelGroup *joint_model_group = qnode.move_group->getCurrentState()->getJointModelGroup(qnode.PLANNING_GROUP);
+    robot_state::RobotStatePtr kinematic_state(new robot_state::RobotState(qnode.kinematic_model));
+    const std::vector<std::string> &joint_names = joint_model_group->getVariableNames();
+
+    found_ik = kinematic_state->setFromIK(joint_model_group, target_pose, 10, 0.01); //0.1ms
+
+    if (found_ik)
+    {
+      kinematic_state->copyJointGroupPositions(joint_model_group, joint_values);
+      double arr[9];
+      for (std::size_t i = 0; i < joint_names.size(); ++i)
+      {
+
+        ROS_INFO("Joint %s: %f", joint_names[i].c_str(), joint_values[i]);
+      }
+      //std::copy(joint_values.begin(),joint_values.end(),arr);
+
+
+
+      Moveit_Jointvalue_1 = QString::number(joint_values[0]*180/pi,'f',4).toDouble();
+      Moveit_Jointvalue_2 = QString::number(joint_values[1]*180/pi,'f',4).toDouble();
+      Moveit_Jointvalue_3 = QString::number(joint_values[4]*180/pi,'f',4).toDouble();
+      Moveit_Jointvalue_4 = QString::number(joint_values[7]*180/pi,'f',4).toDouble();
+      Moveit_Jointvalue_5 = QString::number(joint_values[8]*180/pi,'f',4).toDouble();
+      Moveit_Jointvalue_6 = QString::number(joint_values[9]*180/pi,'f',4).toDouble();
+
+      qnode.move_group->setPoseTarget(target_pose);
+   //   qnode.move_group->move();
+      QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(Moveit_Jointvalue_1).arg(Moveit_Jointvalue_2).arg(Moveit_Jointvalue_3).arg(Moveit_Jointvalue_4).arg(Moveit_Jointvalue_5).arg(Moveit_Jointvalue_6);
+      //QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(qnode.joint_values[0]).arg(qnode.joint_values[1])
+      //    .arg(qnode.joint_values[4]).arg(qnode.joint_values[7]).arg(qnode.joint_values[8]).arg(qnode.joint_values[9]);
+      ROS_INFO("joint1: %f",Moveit_Jointvalue_1);
+      ROS_INFO("joint2: %f",Moveit_Jointvalue_2);
+      ROS_INFO("joint3: %f",Moveit_Jointvalue_3);
+      ROS_INFO("joint4: %f",Moveit_Jointvalue_4);
+      ROS_INFO("joint5: %f",Moveit_Jointvalue_5);
+      ROS_INFO("joint6: %f",Moveit_Jointvalue_6);
+      QString msg = "Moving!";
+      tcpSocket->write(Joint_data.toLocal8Bit().constData());
+      ui.listWidget_Server_text->addItem(QString("%1").arg(Joint_data));
+      ui.listWidget_Server_text->scrollToBottom();
+
+      while(true)
+      {
+       if(complete_pose)
+          break;
+      }
+
+      ros::Duration(1).sleep();
+      complete_pose = false;
+      tracking_count++;
+
+      ROS_INFO("Count: %d ",tracking_count);
+
+    }
+    while(true)
+    {
+
+        if(qnode._labeledCenter_calculate_y < 50)
+        {
+            geometry_msgs::Pose target_pose;
+            target_pose.position.x = qnode._labeledCenter_calculate_x;
+            target_pose.position.y = 50;
+            target_pose.position.z = 200;
+            double rotate_x = 117*pi/180;
+            double rotate_y = (-90)*pi/180;
+            double rotate_z = (-117)*pi/180;
+
+            tf::Quaternion q;
+            q.setRPY(rotate_x,rotate_y,rotate_z);
+            target_pose.orientation.x = q.x();
+            target_pose.orientation.y = q.y();
+            target_pose.orientation.z = q.z();
+            target_pose.orientation.w = q.w();
+            const robot_state::JointModelGroup *joint_model_group = qnode.move_group->getCurrentState()->getJointModelGroup(qnode.PLANNING_GROUP);
+            robot_state::RobotStatePtr kinematic_state(new robot_state::RobotState(qnode.kinematic_model));
+            const std::vector<std::string> &joint_names = joint_model_group->getVariableNames();
+
+            found_ik = kinematic_state->setFromIK(joint_model_group, target_pose, 10, 0.01); //0.1ms
+
+            if (found_ik)
+            {
+              kinematic_state->copyJointGroupPositions(joint_model_group, joint_values);
+              double arr[9];
+              for (std::size_t i = 0; i < joint_names.size(); ++i)
+              {
+
+                ROS_INFO("Joint %s: %f", joint_names[i].c_str(), joint_values[i]);
+              }
+              //std::copy(joint_values.begin(),joint_values.end(),arr);
+
+
+
+              Moveit_Jointvalue_1 = QString::number(joint_values[0]*180/pi,'f',4).toDouble();
+              Moveit_Jointvalue_2 = QString::number(joint_values[1]*180/pi,'f',4).toDouble();
+              Moveit_Jointvalue_3 = QString::number(joint_values[4]*180/pi,'f',4).toDouble();
+              Moveit_Jointvalue_4 = QString::number(joint_values[7]*180/pi,'f',4).toDouble();
+              Moveit_Jointvalue_5 = QString::number(joint_values[8]*180/pi,'f',4).toDouble();
+              Moveit_Jointvalue_6 = QString::number(joint_values[9]*180/pi,'f',4).toDouble();
+
+              qnode.move_group->setPoseTarget(target_pose);
+           //   qnode.move_group->move();
+              QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(Moveit_Jointvalue_1).arg(Moveit_Jointvalue_2).arg(Moveit_Jointvalue_3).arg(Moveit_Jointvalue_4).arg(Moveit_Jointvalue_5).arg(Moveit_Jointvalue_6);
+              //QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(qnode.joint_values[0]).arg(qnode.joint_values[1])
+              //    .arg(qnode.joint_values[4]).arg(qnode.joint_values[7]).arg(qnode.joint_values[8]).arg(qnode.joint_values[9]);
+              ROS_INFO("joint1: %f",Moveit_Jointvalue_1);
+              ROS_INFO("joint2: %f",Moveit_Jointvalue_2);
+              ROS_INFO("joint3: %f",Moveit_Jointvalue_3);
+              ROS_INFO("joint4: %f",Moveit_Jointvalue_4);
+              ROS_INFO("joint5: %f",Moveit_Jointvalue_5);
+              ROS_INFO("joint6: %f",Moveit_Jointvalue_6);
+              QString msg = "Moving!";
+              tcpSocket->write(Joint_data.toLocal8Bit().constData());
+              ui.listWidget_Server_text->addItem(QString("%1").arg(Joint_data));
+              ui.listWidget_Server_text->scrollToBottom();
+
+              while(true)
+              {
+               if(complete_pose)
+                  break;
+              }
+
+              ros::Duration(1).sleep();
+
+              Gripper_Close();
+
+              complete_pose = false;
+              tracking_count++;
+
+              ROS_INFO("Count: %d ",tracking_count);
+
+            break;
+            }
+        }
+    }
+}
+
+void qtros::MainWindow::tracking()
+{
+    tracking_count = 0;
+
+    while(qnode._labeledCenter_calculate_y > 0)
+    {
+        geometry_msgs::Pose target_pose;
+        target_pose.position.x = qnode._labeledCenter_calculate_x;
+        target_pose.position.y = qnode._labeledCenter_calculate_y;
+        target_pose.position.z = 400;
+        double rotate_x = 117*pi/180;
+        double rotate_y = (-90)*pi/180;
+        double rotate_z = (-117)*pi/180;
+
+        tf::Quaternion q;
+        q.setRPY(rotate_x,rotate_y,rotate_z);
+        target_pose.orientation.x = q.x();
+        target_pose.orientation.y = q.y();
+        target_pose.orientation.z = q.z();
+        target_pose.orientation.w = q.w();
+        const robot_state::JointModelGroup *joint_model_group = qnode.move_group->getCurrentState()->getJointModelGroup(qnode.PLANNING_GROUP);
+        robot_state::RobotStatePtr kinematic_state(new robot_state::RobotState(qnode.kinematic_model));
+        const std::vector<std::string> &joint_names = joint_model_group->getVariableNames();
+
+        found_ik = kinematic_state->setFromIK(joint_model_group, target_pose, 10, 0.01); //0.1ms
+
+        if (found_ik)
+        {
+          kinematic_state->copyJointGroupPositions(joint_model_group, joint_values);
+          double arr[9];
+          for (std::size_t i = 0; i < joint_names.size(); ++i)
+          {
+
+            ROS_INFO("Joint %s: %f", joint_names[i].c_str(), joint_values[i]);
+          }
+          //std::copy(joint_values.begin(),joint_values.end(),arr);
+
+
+
+          Moveit_Jointvalue_1 = QString::number(joint_values[0]*180/pi,'f',4).toDouble();
+          Moveit_Jointvalue_2 = QString::number(joint_values[1]*180/pi,'f',4).toDouble();
+          Moveit_Jointvalue_3 = QString::number(joint_values[4]*180/pi,'f',4).toDouble();
+          Moveit_Jointvalue_4 = QString::number(joint_values[7]*180/pi,'f',4).toDouble();
+          Moveit_Jointvalue_5 = QString::number(joint_values[8]*180/pi,'f',4).toDouble();
+          Moveit_Jointvalue_6 = QString::number(joint_values[9]*180/pi,'f',4).toDouble();
+
+          qnode.move_group->setPoseTarget(target_pose);
+       //   qnode.move_group->move();
+          QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(Moveit_Jointvalue_1).arg(Moveit_Jointvalue_2).arg(Moveit_Jointvalue_3).arg(Moveit_Jointvalue_4).arg(Moveit_Jointvalue_5).arg(Moveit_Jointvalue_6);
+          //QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(qnode.joint_values[0]).arg(qnode.joint_values[1])
+          //    .arg(qnode.joint_values[4]).arg(qnode.joint_values[7]).arg(qnode.joint_values[8]).arg(qnode.joint_values[9]);
+          ROS_INFO("joint1: %f",Moveit_Jointvalue_1);
+          ROS_INFO("joint2: %f",Moveit_Jointvalue_2);
+          ROS_INFO("joint3: %f",Moveit_Jointvalue_3);
+          ROS_INFO("joint4: %f",Moveit_Jointvalue_4);
+          ROS_INFO("joint5: %f",Moveit_Jointvalue_5);
+          ROS_INFO("joint6: %f",Moveit_Jointvalue_6);
+          QString msg = "Moving!";
+          tcpSocket->write(Joint_data.toLocal8Bit().constData());
+          ui.listWidget_Server_text->addItem(QString("%1").arg(Joint_data));
+          ui.listWidget_Server_text->scrollToBottom();
+
+          while(true)
+          {
+           if(complete_pose)
+              break;
+          }
+
+          ros::Duration(1).sleep();
+          complete_pose = false;
+          tracking_count++;
+
+          ROS_INFO("Count: %d ",tracking_count);
+
+        }
+    }
 }
 
 void qtros::MainWindow::Task_pick_and_place() //here3

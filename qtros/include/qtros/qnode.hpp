@@ -26,10 +26,10 @@
 #include "sensor_msgs/JointState.h"
 #include "iostream"
 #include "vector"
+#include "find_object_2d/ObjectsStamped.h"
 #include <image_transport/image_transport.h>
 #include <opencv2/highgui/highgui.hpp>
 #include <cv_bridge/cv_bridge.h>
-#include <find_object_2d/ObjectsStamped.h>
 #include <QTransform>
 #include <QtNetwork/QTcpSocket>
 #include <moveit/move_group_interface/move_group_interface.h>
@@ -65,6 +65,7 @@ public:
   void chatterCallback(const sensor_msgs::JointState::ConstPtr& msg);
   void ObjectCallback(const std_msgs::Float32MultiArrayConstPtr& msg);
   void detectObjectCallback(const std_msgs::Float32MultiArrayConstPtr& msg);
+  void detectLabeledCallback(const std_msgs::Float32MultiArrayConstPtr& msg);
   moveit::planning_interface::MoveGroupInterface *move_group;
   const std::string PLANNING_GROUP = "arm"; // JointModelGroup
   QString Robot_CurrentValue;
@@ -88,6 +89,11 @@ public:
 	void log( const LogLevel &level, const std::string &msg);
   double GetJointValueArr[9];
 
+  ros::Time cur_time;
+  ros::Time pre_time;
+
+  double cur_time_double;
+  double pre_time_double;
 
   float _currentX;
   float _currentY;
@@ -106,6 +112,32 @@ public:
   int _detectpixel_v;
   float _detectNKalmanObject_x;
   float _detectNKalmanObject_y;
+
+  //Label_center pixel point;
+  float _labeledCenter_x;
+  float _labeledCenter_y;
+
+  float _pre_labeledCenter_x;
+  float _pre_labeledCenter_y;
+
+  float _dist_pixel_u = 1.923;
+  float _dist_pixel_v = 1.681;
+
+  float _labeledCenter_calculate_x; //camera coordinate 457, 471;
+  float _labeledCenter_calculate_y;
+
+  float _pre_labeledCenter_calculate_x;
+  float _pre_labeledCenter_calculate_y;
+
+  float _expected_x;
+  float _expected_y;
+
+  float _expected_2_x;
+  float _expected_2_y;
+
+  double velocity_enclosure;
+
+
   cv::Mat image;
 
 
@@ -123,6 +155,7 @@ private:
   ros::Subscriber sub;
   ros::Subscriber subObject;
   ros::Subscriber sub_detectObject;
+  ros::Subscriber sub_labeledObject;
 
 
 //  const robot_state::JointModelGroup *joint_model_group;
