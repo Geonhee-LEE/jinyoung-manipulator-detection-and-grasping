@@ -43,7 +43,7 @@ sudo apt-get install ros-kinetic-tf2-geometry-msgs ros-kinetic-find-object-2d ro
 Note: Connect the camera to the USB 3.0
 
  <pre><code>
-roslaunch realsense2_camera rs_multiple_devices.launch serial_no_camera1:=732612061000 serial_no_camera2:=819312073026
+roslaunch realsense2_camera rs_multiple_devices.launch serial_no_camera1:=841612070573 serial_no_camera2:=839112062525
  </pre></code>
  
  
