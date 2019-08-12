@@ -67,6 +67,7 @@ public:
   void test_move_func();
   void tracking();
   void tracking_test1();
+  void write_with_offset(double,double,double,double,double,double);
 
   void _190714_trakint_test();
   void _190714_trakint_test1();

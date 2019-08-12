@@ -1838,7 +1838,7 @@
           <item row="1" column="0" colspan="2">
            <widget class="QLineEdit" name="line_edit_master">
             <property name="text">
-             <string>http://192.168.1.2:11311/</string>
+             <string>http://192.168.0.2:11311/</string>
             </property>
            </widget>
           </item>
@@ -1858,7 +1858,7 @@
           <item row="3" column="0" colspan="2">
            <widget class="QLineEdit" name="line_edit_host">
             <property name="text">
-             <string>192.168.1.67</string>
+             <string>192.168.0.2</string>
             </property>
            </widget>
           </item>
@@ -1931,7 +1931,7 @@
            </rect>
           </property>
           <property name="text">
-           <string>192.168.0.85</string>
+           <string>192.168.0.5</string>
           </property>
          </widget>
          <widget class="QLabel" name="label_5">

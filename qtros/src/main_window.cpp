@@ -471,8 +471,7 @@ void qtros::MainWindow::on_btnSRV_ErrorClear_clicked()
 }
 
 void qtros::MainWindow::on_btnHomming_clicked()
-{
-  
+{  
   //moveit
   const robot_state::JointModelGroup *joint_model_group = qnode.move_group->getCurrentState()->getJointModelGroup(qnode.PLANNING_GROUP);
   moveit::core::RobotStatePtr current_state = qnode.move_group->getCurrentState();
@@ -492,13 +491,11 @@ void qtros::MainWindow::on_btnHomming_clicked()
   tcpSocket->write(QString("J10J20J30J40J50J60").toLocal8Bit().constData());
   ui.listWidget_Server_text->addItem(QString("%1").arg(msg));
   ui.listWidget_Server_text->scrollToBottom();
-
 }
 
 void qtros::MainWindow::on_btnSendtoRobot_clicked()
 {
   //boost::thread th1(boost::bind(&Thread_point));
-
 }
 
 void qtros::MainWindow::on_btntest_clicked() //here test
@@ -506,6 +503,22 @@ void qtros::MainWindow::on_btntest_clicked() //here test
     boost::thread th3(boost::bind(&MainWindow::_190714_trakint_test2, this));
 }
 
+void qtros::MainWindow::write_with_offset(double j1, double j2, double j3, double j4, double j5, double j6)
+{
+    //offset
+    Moveit_Jointvalue_1 = j1;
+    Moveit_Jointvalue_2 = j2;
+    Moveit_Jointvalue_3 = j3;
+    Moveit_Jointvalue_4 = j4;
+    Moveit_Jointvalue_5 = j5;
+    Moveit_Jointvalue_6 = j6;
+
+    QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(Moveit_Jointvalue_1).arg(Moveit_Jointvalue_2).arg(Moveit_Jointvalue_3).arg(Moveit_Jointvalue_4).arg(Moveit_Jointvalue_5).arg(Moveit_Jointvalue_6);
+    QString msg = "Moving!";
+    tcpSocket->write(Joint_data.toLocal8Bit().constData());
+    ui.listWidget_Server_text->addItem(QString("%1").arg(Joint_data));
+    ui.listWidget_Server_text->scrollToBottom();
+}
 
 void qtros::MainWindow::test_move_func()
 {
@@ -544,10 +557,11 @@ void qtros::MainWindow::test_move_func()
               double arr[9];
               for (std::size_t i = 0; i < joint_names.size(); ++i)
               {
-
                 ROS_INFO("Joint %s: %f", joint_names[i].c_str(), joint_values[i]);
               }
-              //std::copy(joint_values.begin(),joint_values.end(),arr);
+
+
+
 
               Moveit_Jointvalue_1 = QString::number(joint_values[0]*180/pi,'f',4).toDouble();
               Moveit_Jointvalue_2 = QString::number(joint_values[1]*180/pi,'f',4).toDouble();
@@ -557,20 +571,7 @@ void qtros::MainWindow::test_move_func()
               Moveit_Jointvalue_6 = QString::number(joint_values[9]*180/pi,'f',4).toDouble();
 
               qnode.move_group->setPoseTarget(target_pose);
-           //   qnode.move_group->move();
-              QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(Moveit_Jointvalue_1).arg(Moveit_Jointvalue_2).arg(Moveit_Jointvalue_3).arg(Moveit_Jointvalue_4).arg(Moveit_Jointvalue_5).arg(Moveit_Jointvalue_6);
-              //QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(qnode.joint_values[0]).arg(qnode.joint_values[1])
-              //    .arg(qnode.joint_values[4]).arg(qnode.joint_values[7]).arg(qnode.joint_values[8]).arg(qnode.joint_values[9]);
-              ROS_INFO("joint1: %f",Moveit_Jointvalue_1);
-              ROS_INFO("joint2: %f",Moveit_Jointvalue_2);
-              ROS_INFO("joint3: %f",Moveit_Jointvalue_3);
-              ROS_INFO("joint4: %f",Moveit_Jointvalue_4);
-              ROS_INFO("joint5: %f",Moveit_Jointvalue_5);
-              ROS_INFO("joint6: %f",Moveit_Jointvalue_6);
-              QString msg = "Moving!";
-              tcpSocket->write(Joint_data.toLocal8Bit().constData());
-              ui.listWidget_Server_text->addItem(QString("%1").arg(Joint_data));
-              ui.listWidget_Server_text->scrollToBottom();
+              write_with_offset(Moveit_Jointvalue_1, Moveit_Jointvalue_2, Moveit_Jointvalue_3, Moveit_Jointvalue_4, Moveit_Jointvalue_5, Moveit_Jointvalue_6);
 
               while(true)
               {
@@ -629,8 +630,6 @@ void qtros::MainWindow::test_move_func()
 
               ROS_INFO("Joint %s: %f", joint_names[i].c_str(), joint_values[i]);
             }
-            //std::copy(joint_values.begin(),joint_values.end(),arr);
-
 
 
             Moveit_Jointvalue_1 = QString::number(joint_values[0]*180/pi,'f',4).toDouble();
@@ -641,20 +640,7 @@ void qtros::MainWindow::test_move_func()
             Moveit_Jointvalue_6 = QString::number(joint_values[9]*180/pi,'f',4).toDouble();
 
             qnode.move_group->setPoseTarget(target_pose);
-         //   qnode.move_group->move();
-            QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(Moveit_Jointvalue_1).arg(Moveit_Jointvalue_2).arg(Moveit_Jointvalue_3).arg(Moveit_Jointvalue_4).arg(Moveit_Jointvalue_5).arg(Moveit_Jointvalue_6);
-            //QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(qnode.joint_values[0]).arg(qnode.joint_values[1])
-            //    .arg(qnode.joint_values[4]).arg(qnode.joint_values[7]).arg(qnode.joint_values[8]).arg(qnode.joint_values[9]);
-            ROS_INFO("joint1: %f",Moveit_Jointvalue_1);
-            ROS_INFO("joint2: %f",Moveit_Jointvalue_2);
-            ROS_INFO("joint3: %f",Moveit_Jointvalue_3);
-            ROS_INFO("joint4: %f",Moveit_Jointvalue_4);
-            ROS_INFO("joint5: %f",Moveit_Jointvalue_5);
-            ROS_INFO("joint6: %f",Moveit_Jointvalue_6);
-            QString msg = "Moving!";
-            tcpSocket->write(Joint_data.toLocal8Bit().constData());
-            ui.listWidget_Server_text->addItem(QString("%1").arg(Joint_data));
-            ui.listWidget_Server_text->scrollToBottom();
+            write_with_offset(Moveit_Jointvalue_1, Moveit_Jointvalue_2, Moveit_Jointvalue_3, Moveit_Jointvalue_4, Moveit_Jointvalue_5, Moveit_Jointvalue_6);
 
             while(true)
             {
@@ -665,7 +651,6 @@ void qtros::MainWindow::test_move_func()
 
             complete_pose = false;
             turn = 2;
-
           }
           else
           {
@@ -706,8 +691,6 @@ void qtros::MainWindow::test_move_func()
 
               ROS_INFO("Joint %s: %f", joint_names[i].c_str(), joint_values[i]);
             }
-            //std::copy(joint_values.begin(),joint_values.end(),arr);
-
 
 
             Moveit_Jointvalue_1 = QString::number(joint_values[0]*180/pi,'f',4).toDouble();
@@ -718,20 +701,7 @@ void qtros::MainWindow::test_move_func()
             Moveit_Jointvalue_6 = QString::number(joint_values[9]*180/pi,'f',4).toDouble();
 
             qnode.move_group->setPoseTarget(target_pose);
-          //  qnode.move_group->move();
-            QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(Moveit_Jointvalue_1).arg(Moveit_Jointvalue_2).arg(Moveit_Jointvalue_3).arg(Moveit_Jointvalue_4).arg(Moveit_Jointvalue_5).arg(Moveit_Jointvalue_6);
-            //QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(qnode.joint_values[0]).arg(qnode.joint_values[1])
-            //    .arg(qnode.joint_values[4]).arg(qnode.joint_values[7]).arg(qnode.joint_values[8]).arg(qnode.joint_values[9]);
-            ROS_INFO("joint1: %f",Moveit_Jointvalue_1);
-            ROS_INFO("joint2: %f",Moveit_Jointvalue_2);
-            ROS_INFO("joint3: %f",Moveit_Jointvalue_3);
-            ROS_INFO("joint4: %f",Moveit_Jointvalue_4);
-            ROS_INFO("joint5: %f",Moveit_Jointvalue_5);
-            ROS_INFO("joint6: %f",Moveit_Jointvalue_6);
-            QString msg = "Moving!";
-            tcpSocket->write(Joint_data.toLocal8Bit().constData());
-            ui.listWidget_Server_text->addItem(QString("%1").arg(Joint_data));
-            ui.listWidget_Server_text->scrollToBottom();
+            write_with_offset(Moveit_Jointvalue_1, Moveit_Jointvalue_2, Moveit_Jointvalue_3, Moveit_Jointvalue_4, Moveit_Jointvalue_5, Moveit_Jointvalue_6);
 
             while(true)
             {
@@ -792,7 +762,7 @@ void qtros::MainWindow::test_move_func()
 
               ROS_INFO("Joint %s: %f", joint_names[i].c_str(), joint_values[i]);
             }
-            //std::copy(joint_values.begin(),joint_values.end(),arr);
+
 
 
 
@@ -804,20 +774,7 @@ void qtros::MainWindow::test_move_func()
             Moveit_Jointvalue_6 = QString::number(joint_values[9]*180/pi,'f',4).toDouble();
 
             qnode.move_group->setPoseTarget(target_pose);
-          //  qnode.move_group->move();
-            QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(Moveit_Jointvalue_1).arg(Moveit_Jointvalue_2).arg(Moveit_Jointvalue_3).arg(Moveit_Jointvalue_4).arg(Moveit_Jointvalue_5).arg(Moveit_Jointvalue_6);
-            //QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(qnode.joint_values[0]).arg(qnode.joint_values[1])
-            //    .arg(qnode.joint_values[4]).arg(qnode.joint_values[7]).arg(qnode.joint_values[8]).arg(qnode.joint_values[9]);
-            ROS_INFO("joint1: %f",Moveit_Jointvalue_1);
-            ROS_INFO("joint2: %f",Moveit_Jointvalue_2);
-            ROS_INFO("joint3: %f",Moveit_Jointvalue_3);
-            ROS_INFO("joint4: %f",Moveit_Jointvalue_4);
-            ROS_INFO("joint5: %f",Moveit_Jointvalue_5);
-            ROS_INFO("joint6: %f",Moveit_Jointvalue_6);
-            QString msg = "Moving!";
-            tcpSocket->write(Joint_data.toLocal8Bit().constData());
-            ui.listWidget_Server_text->addItem(QString("%1").arg(Joint_data));
-            ui.listWidget_Server_text->scrollToBottom();
+            write_with_offset(Moveit_Jointvalue_1, Moveit_Jointvalue_2, Moveit_Jointvalue_3, Moveit_Jointvalue_4, Moveit_Jointvalue_5, Moveit_Jointvalue_6);
 
             while(true)
             {
@@ -871,7 +828,7 @@ void qtros::MainWindow::test_move_func()
 
                 ROS_INFO("Joint %s: %f", joint_names[i].c_str(), joint_values[i]);
               }
-              //std::copy(joint_values.begin(),joint_values.end(),arr);
+
 
               Moveit_Jointvalue_1 = QString::number(joint_values[0]*180/pi,'f',4).toDouble();
               Moveit_Jointvalue_2 = QString::number(joint_values[1]*180/pi,'f',4).toDouble();
@@ -881,20 +838,7 @@ void qtros::MainWindow::test_move_func()
               Moveit_Jointvalue_6 = QString::number(joint_values[9]*180/pi,'f',4).toDouble();
 
               qnode.move_group->setPoseTarget(target_pose);
-           //   qnode.move_group->move();
-              QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(Moveit_Jointvalue_1).arg(Moveit_Jointvalue_2).arg(Moveit_Jointvalue_3).arg(Moveit_Jointvalue_4).arg(Moveit_Jointvalue_5).arg(Moveit_Jointvalue_6);
-              //QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(qnode.joint_values[0]).arg(qnode.joint_values[1])
-              //    .arg(qnode.joint_values[4]).arg(qnode.joint_values[7]).arg(qnode.joint_values[8]).arg(qnode.joint_values[9]);
-              ROS_INFO("joint1: %f",Moveit_Jointvalue_1);
-              ROS_INFO("joint2: %f",Moveit_Jointvalue_2);
-              ROS_INFO("joint3: %f",Moveit_Jointvalue_3);
-              ROS_INFO("joint4: %f",Moveit_Jointvalue_4);
-              ROS_INFO("joint5: %f",Moveit_Jointvalue_5);
-              ROS_INFO("joint6: %f",Moveit_Jointvalue_6);
-              QString msg = "Moving!";
-              tcpSocket->write(Joint_data.toLocal8Bit().constData());
-              ui.listWidget_Server_text->addItem(QString("%1").arg(Joint_data));
-              ui.listWidget_Server_text->scrollToBottom();
+              write_with_offset(Moveit_Jointvalue_1, Moveit_Jointvalue_2, Moveit_Jointvalue_3, Moveit_Jointvalue_4, Moveit_Jointvalue_5, Moveit_Jointvalue_6);
 
               while(true)
               {
@@ -961,7 +905,7 @@ void qtros::MainWindow::on_btnDetectPose_clicked() //here2
 
         ROS_INFO("Joint %s: %f", joint_names[i].c_str(), joint_values[i]);
       }
-      //std::copy(joint_values.begin(),joint_values.end(),arr);
+
 
 
 
@@ -973,21 +917,7 @@ void qtros::MainWindow::on_btnDetectPose_clicked() //here2
       Moveit_Jointvalue_6 = QString::number(joint_values[9]*180/pi,'f',4).toDouble();
 
       qnode.move_group->setPoseTarget(target_pose);
-      qnode.move_group->move();
-
-      QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(Moveit_Jointvalue_1).arg(Moveit_Jointvalue_2).arg(Moveit_Jointvalue_3).arg(Moveit_Jointvalue_4).arg(Moveit_Jointvalue_5).arg(Moveit_Jointvalue_6);
-      //QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(qnode.joint_values[0]).arg(qnode.joint_values[1])
-      //    .arg(qnode.joint_values[4]).arg(qnode.joint_values[7]).arg(qnode.joint_values[8]).arg(qnode.joint_values[9]);
-      ROS_INFO("joint1: %f",Moveit_Jointvalue_1);
-      ROS_INFO("joint2: %f",Moveit_Jointvalue_2);
-      ROS_INFO("joint3: %f",Moveit_Jointvalue_3);
-      ROS_INFO("joint4: %f",Moveit_Jointvalue_4);
-      ROS_INFO("joint5: %f",Moveit_Jointvalue_5);
-      ROS_INFO("joint6: %f",Moveit_Jointvalue_6);
-      QString msg = "Moving!";
-      tcpSocket->write(Joint_data.toLocal8Bit().constData());
-      ui.listWidget_Server_text->addItem(QString("%1").arg(Joint_data));
-      ui.listWidget_Server_text->scrollToBottom();
+      write_with_offset(Moveit_Jointvalue_1, Moveit_Jointvalue_2, Moveit_Jointvalue_3, Moveit_Jointvalue_4, Moveit_Jointvalue_5, Moveit_Jointvalue_6);
 
       usleep(2000000);
 
@@ -1069,7 +999,7 @@ void qtros::MainWindow::inverse_and_move(double position_x,double position_y,dou
 
         ROS_INFO("Joint %s: %f", joint_names[i].c_str(), joint_values[i]);
       }
-      //std::copy(joint_values.begin(),joint_values.end(),arr);
+
 
 
 
@@ -1081,20 +1011,7 @@ void qtros::MainWindow::inverse_and_move(double position_x,double position_y,dou
       Moveit_Jointvalue_6 = QString::number(joint_values[9]*180/pi,'f',4).toDouble();
 
       qnode.move_group->setPoseTarget(target_pose);
-   //   qnode.move_group->move();
-      QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(Moveit_Jointvalue_1).arg(Moveit_Jointvalue_2).arg(Moveit_Jointvalue_3).arg(Moveit_Jointvalue_4).arg(Moveit_Jointvalue_5).arg(Moveit_Jointvalue_6);
-      //QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(qnode.joint_values[0]).arg(qnode.joint_values[1])
-      //    .arg(qnode.joint_values[4]).arg(qnode.joint_values[7]).arg(qnode.joint_values[8]).arg(qnode.joint_values[9]);
-      ROS_INFO("joint1: %f",Moveit_Jointvalue_1);
-      ROS_INFO("joint2: %f",Moveit_Jointvalue_2);
-      ROS_INFO("joint3: %f",Moveit_Jointvalue_3);
-      ROS_INFO("joint4: %f",Moveit_Jointvalue_4);
-      ROS_INFO("joint5: %f",Moveit_Jointvalue_5);
-      ROS_INFO("joint6: %f",Moveit_Jointvalue_6);
-      QString msg = "Moving!";
-      tcpSocket->write(Joint_data.toLocal8Bit().constData());
-      ui.listWidget_Server_text->addItem(QString("%1").arg(Joint_data));
-      ui.listWidget_Server_text->scrollToBottom();
+      write_with_offset(Moveit_Jointvalue_1, Moveit_Jointvalue_2, Moveit_Jointvalue_3, Moveit_Jointvalue_4, Moveit_Jointvalue_5, Moveit_Jointvalue_6);
 
       usleep(2000000);
 
@@ -1141,7 +1058,7 @@ void qtros::MainWindow::on_btnEndToCameraCoordinate_clicked()
 
       ROS_INFO("Joint %s: %f", joint_names[i].c_str(), joint_values[i]);
     }
-    //std::copy(joint_values.begin(),joint_values.end(),arr);
+
 
     Moveit_Jointvalue_1 = QString::number(joint_values[0]*180/pi,'f',4).toDouble();
     Moveit_Jointvalue_2 = QString::number(joint_values[1]*180/pi,'f',4).toDouble();
@@ -1151,21 +1068,7 @@ void qtros::MainWindow::on_btnEndToCameraCoordinate_clicked()
     Moveit_Jointvalue_6 = QString::number(joint_values[9]*180/pi,'f',4).toDouble();
 
     qnode.move_group->setPoseTarget(target_pose);
-    qnode.move_group->move();
-    QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(Moveit_Jointvalue_1).arg(Moveit_Jointvalue_2).arg(Moveit_Jointvalue_3).arg(Moveit_Jointvalue_4).arg(Moveit_Jointvalue_5).arg(Moveit_Jointvalue_6);
-    //QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(qnode.joint_values[0]).arg(qnode.joint_values[1])
-    //    .arg(qnode.joint_values[4]).arg(qnode.joint_values[7]).arg(qnode.joint_values[8]).arg(qnode.joint_values[9]);
-    ROS_INFO("joint1: %f",Moveit_Jointvalue_1);
-    ROS_INFO("joint2: %f",Moveit_Jointvalue_2);
-    ROS_INFO("joint3: %f",Moveit_Jointvalue_3);
-    ROS_INFO("joint4: %f",Moveit_Jointvalue_4);
-    ROS_INFO("joint5: %f",Moveit_Jointvalue_5);
-    ROS_INFO("joint6: %f",Moveit_Jointvalue_6);
-    QString msg = "Moving!";
-    tcpSocket->write(Joint_data.toLocal8Bit().constData());
-    ui.listWidget_Server_text->addItem(QString("%1").arg(Joint_data));
-    ui.listWidget_Server_text->scrollToBottom();
-
+    write_with_offset(Moveit_Jointvalue_1, Moveit_Jointvalue_2, Moveit_Jointvalue_3, Moveit_Jointvalue_4, Moveit_Jointvalue_5, Moveit_Jointvalue_6);
 
   }
   else
@@ -1634,12 +1537,12 @@ void qtros::MainWindow::pick_and_place_task()
       qnode.move_group->setPoseTarget(target_pose);
       QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(Moveit_Jointvalue_1).arg(Moveit_Jointvalue_2).arg(Moveit_Jointvalue_3).arg(Moveit_Jointvalue_4).arg(Moveit_Jointvalue_5).arg(Moveit_Jointvalue_6);
 
-      ROS_INFO("joint1: %f",Moveit_Jointvalue_1);
-      ROS_INFO("joint2: %f",Moveit_Jointvalue_2);
-      ROS_INFO("joint3: %f",Moveit_Jointvalue_3);
-      ROS_INFO("joint4: %f",Moveit_Jointvalue_4);
-      ROS_INFO("joint5: %f",Moveit_Jointvalue_5);
-      ROS_INFO("joint6: %f",Moveit_Jointvalue_6);
+
+
+
+
+
+
       QString msg = "Moving!";
       tcpSocket->write(Joint_data.toLocal8Bit().constData());
       ui.listWidget_Server_text->addItem(QString("%1").arg(Joint_data));
@@ -1757,7 +1660,7 @@ void qtros::MainWindow::Thread_point()
           {
             ROS_INFO("Joint %s: %f", joint_names[i].c_str(), joint_values[i]);
           }
-          //std::copy(joint_values.begin(),joint_values.end(),arr);
+
 
           Moveit_Jointvalue_1 = QString::number(joint_values[0]*180/pi,'f',4).toDouble();
           Moveit_Jointvalue_2 = QString::number(joint_values[1]*180/pi,'f',4).toDouble();
@@ -1924,7 +1827,7 @@ void qtros::MainWindow::Repeat() //here
 
               ROS_INFO("Joint %s: %f", joint_names[i].c_str(), joint_values[i]);
             }
-            //std::copy(joint_values.begin(),joint_values.end(),arr);
+
 
 
 
@@ -1938,14 +1841,14 @@ void qtros::MainWindow::Repeat() //here
             qnode.move_group->setPoseTarget(target_pose);
          //   qnode.move_group->move();
             QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(Moveit_Jointvalue_1).arg(Moveit_Jointvalue_2).arg(Moveit_Jointvalue_3).arg(Moveit_Jointvalue_4).arg(Moveit_Jointvalue_5).arg(Moveit_Jointvalue_6);
-            //QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(qnode.joint_values[0]).arg(qnode.joint_values[1])
-            //    .arg(qnode.joint_values[4]).arg(qnode.joint_values[7]).arg(qnode.joint_values[8]).arg(qnode.joint_values[9]);
-            ROS_INFO("joint1: %f",Moveit_Jointvalue_1);
-            ROS_INFO("joint2: %f",Moveit_Jointvalue_2);
-            ROS_INFO("joint3: %f",Moveit_Jointvalue_3);
-            ROS_INFO("joint4: %f",Moveit_Jointvalue_4);
-            ROS_INFO("joint5: %f",Moveit_Jointvalue_5);
-            ROS_INFO("joint6: %f",Moveit_Jointvalue_6);
+
+
+
+
+
+
+
+
             QString msg = "Moving!";
             tcpSocket->write(Joint_data.toLocal8Bit().constData());
             ui.listWidget_Server_text->addItem(QString("%1").arg(Joint_data));
@@ -2003,7 +1906,7 @@ void qtros::MainWindow::Repeat() //here
 
             ROS_INFO("Joint %s: %f", joint_names[i].c_str(), joint_values[i]);
           }
-          //std::copy(joint_values.begin(),joint_values.end(),arr);
+
 
 
 
@@ -2017,14 +1920,14 @@ void qtros::MainWindow::Repeat() //here
           qnode.move_group->setPoseTarget(target_pose);
        //   qnode.move_group->move();
           QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(Moveit_Jointvalue_1).arg(Moveit_Jointvalue_2).arg(Moveit_Jointvalue_3).arg(Moveit_Jointvalue_4).arg(Moveit_Jointvalue_5).arg(Moveit_Jointvalue_6);
-          //QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(qnode.joint_values[0]).arg(qnode.joint_values[1])
-          //    .arg(qnode.joint_values[4]).arg(qnode.joint_values[7]).arg(qnode.joint_values[8]).arg(qnode.joint_values[9]);
-          ROS_INFO("joint1: %f",Moveit_Jointvalue_1);
-          ROS_INFO("joint2: %f",Moveit_Jointvalue_2);
-          ROS_INFO("joint3: %f",Moveit_Jointvalue_3);
-          ROS_INFO("joint4: %f",Moveit_Jointvalue_4);
-          ROS_INFO("joint5: %f",Moveit_Jointvalue_5);
-          ROS_INFO("joint6: %f",Moveit_Jointvalue_6);
+
+
+
+
+
+
+
+
           QString msg = "Moving!";
           tcpSocket->write(Joint_data.toLocal8Bit().constData());
           ui.listWidget_Server_text->addItem(QString("%1").arg(Joint_data));
@@ -2081,7 +1984,7 @@ void qtros::MainWindow::Repeat() //here
 
             ROS_INFO("Joint %s: %f", joint_names[i].c_str(), joint_values[i]);
           }
-          //std::copy(joint_values.begin(),joint_values.end(),arr);
+
 
 
 
@@ -2095,14 +1998,14 @@ void qtros::MainWindow::Repeat() //here
           qnode.move_group->setPoseTarget(target_pose);
         //  qnode.move_group->move();
           QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(Moveit_Jointvalue_1).arg(Moveit_Jointvalue_2).arg(Moveit_Jointvalue_3).arg(Moveit_Jointvalue_4).arg(Moveit_Jointvalue_5).arg(Moveit_Jointvalue_6);
-          //QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(qnode.joint_values[0]).arg(qnode.joint_values[1])
-          //    .arg(qnode.joint_values[4]).arg(qnode.joint_values[7]).arg(qnode.joint_values[8]).arg(qnode.joint_values[9]);
-          ROS_INFO("joint1: %f",Moveit_Jointvalue_1);
-          ROS_INFO("joint2: %f",Moveit_Jointvalue_2);
-          ROS_INFO("joint3: %f",Moveit_Jointvalue_3);
-          ROS_INFO("joint4: %f",Moveit_Jointvalue_4);
-          ROS_INFO("joint5: %f",Moveit_Jointvalue_5);
-          ROS_INFO("joint6: %f",Moveit_Jointvalue_6);
+
+
+
+
+
+
+
+
           QString msg = "Moving!";
           tcpSocket->write(Joint_data.toLocal8Bit().constData());
           ui.listWidget_Server_text->addItem(QString("%1").arg(Joint_data));
@@ -2159,9 +2062,6 @@ void qtros::MainWindow::Repeat() //here
 
             ROS_INFO("Joint %s: %f", joint_names[i].c_str(), joint_values[i]);
           }
-          //std::copy(joint_values.begin(),joint_values.end(),arr);
-
-
 
           Moveit_Jointvalue_1 = QString::number(joint_values[0]*180/pi,'f',4).toDouble();
           Moveit_Jointvalue_2 = QString::number(joint_values[1]*180/pi,'f',4).toDouble();
@@ -2173,14 +2073,7 @@ void qtros::MainWindow::Repeat() //here
           qnode.move_group->setPoseTarget(target_pose);
        //   qnode.move_group->move();
           QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(Moveit_Jointvalue_1).arg(Moveit_Jointvalue_2).arg(Moveit_Jointvalue_3).arg(Moveit_Jointvalue_4).arg(Moveit_Jointvalue_5).arg(Moveit_Jointvalue_6);
-          //QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(qnode.joint_values[0]).arg(qnode.joint_values[1])
-          //    .arg(qnode.joint_values[4]).arg(qnode.joint_values[7]).arg(qnode.joint_values[8]).arg(qnode.joint_values[9]);
-          ROS_INFO("joint1: %f",Moveit_Jointvalue_1);
-          ROS_INFO("joint2: %f",Moveit_Jointvalue_2);
-          ROS_INFO("joint3: %f",Moveit_Jointvalue_3);
-          ROS_INFO("joint4: %f",Moveit_Jointvalue_4);
-          ROS_INFO("joint5: %f",Moveit_Jointvalue_5);
-          ROS_INFO("joint6: %f",Moveit_Jointvalue_6);
+
           QString msg = "Moving!";
           tcpSocket->write(Joint_data.toLocal8Bit().constData());
           ui.listWidget_Server_text->addItem(QString("%1").arg(Joint_data));
@@ -2197,12 +2090,6 @@ void qtros::MainWindow::Repeat() //here
 
           complete_pose = false;
           turn = 4;
-
-
-
-
-
-
         }
         else
         {
@@ -2244,8 +2131,6 @@ void qtros::MainWindow::Repeat() //here
 
             ROS_INFO("Joint %s: %f", joint_names[i].c_str(), joint_values[i]);
           }
-          //std::copy(joint_values.begin(),joint_values.end(),arr);
-
 
 
           Moveit_Jointvalue_1 = QString::number(joint_values[0]*180/pi,'f',4).toDouble();
@@ -2258,14 +2143,7 @@ void qtros::MainWindow::Repeat() //here
           qnode.move_group->setPoseTarget(target_pose);
        //   qnode.move_group->move();
           QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(Moveit_Jointvalue_1).arg(Moveit_Jointvalue_2).arg(Moveit_Jointvalue_3).arg(Moveit_Jointvalue_4).arg(Moveit_Jointvalue_5).arg(Moveit_Jointvalue_6);
-          //QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(qnode.joint_values[0]).arg(qnode.joint_values[1])
-          //    .arg(qnode.joint_values[4]).arg(qnode.joint_values[7]).arg(qnode.joint_values[8]).arg(qnode.joint_values[9]);
-          ROS_INFO("joint1: %f",Moveit_Jointvalue_1);
-          ROS_INFO("joint2: %f",Moveit_Jointvalue_2);
-          ROS_INFO("joint3: %f",Moveit_Jointvalue_3);
-          ROS_INFO("joint4: %f",Moveit_Jointvalue_4);
-          ROS_INFO("joint5: %f",Moveit_Jointvalue_5);
-          ROS_INFO("joint6: %f",Moveit_Jointvalue_6);
+
           QString msg = "Moving!";
           tcpSocket->write(Joint_data.toLocal8Bit().constData());
           ui.listWidget_Server_text->addItem(QString("%1").arg(Joint_data));
@@ -2284,10 +2162,6 @@ void qtros::MainWindow::Repeat() //here
           turn = 0;
           i++;
           ui.txtNumofTimes->setText(QString("%1").arg(i));
-
-
-
-
 
         }
         else
@@ -2342,9 +2216,6 @@ void qtros::MainWindow::_190714_trakint_test()
 
         ROS_INFO("Joint %s: %f", joint_names[i].c_str(), joint_values[i]);
       }
-      //std::copy(joint_values.begin(),joint_values.end(),arr);
-
-
 
       Moveit_Jointvalue_1 = QString::number(joint_values[0]*180/pi,'f',4).toDouble();
       Moveit_Jointvalue_2 = QString::number(joint_values[1]*180/pi,'f',4).toDouble();
@@ -2356,14 +2227,7 @@ void qtros::MainWindow::_190714_trakint_test()
       qnode.move_group->setPoseTarget(target_pose);
    //   qnode.move_group->move();
       QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(Moveit_Jointvalue_1).arg(Moveit_Jointvalue_2).arg(Moveit_Jointvalue_3).arg(Moveit_Jointvalue_4).arg(Moveit_Jointvalue_5).arg(Moveit_Jointvalue_6);
-      //QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(qnode.joint_values[0]).arg(qnode.joint_values[1])
-      //    .arg(qnode.joint_values[4]).arg(qnode.joint_values[7]).arg(qnode.joint_values[8]).arg(qnode.joint_values[9]);
-      ROS_INFO("joint1: %f",Moveit_Jointvalue_1);
-      ROS_INFO("joint2: %f",Moveit_Jointvalue_2);
-      ROS_INFO("joint3: %f",Moveit_Jointvalue_3);
-      ROS_INFO("joint4: %f",Moveit_Jointvalue_4);
-      ROS_INFO("joint5: %f",Moveit_Jointvalue_5);
-      ROS_INFO("joint6: %f",Moveit_Jointvalue_6);
+
       QString msg = "Moving!";
       tcpSocket->write(Joint_data.toLocal8Bit().constData());
       ui.listWidget_Server_text->addItem(QString("%1").arg(Joint_data));
@@ -2457,9 +2321,6 @@ void qtros::MainWindow::_190714_trakint_test()
 
     _190714_trakint_test3();
     usleep(300000);
-
-
-
 }
 
 void qtros::MainWindow::_190714_trakint_test1()
@@ -2497,9 +2358,6 @@ void qtros::MainWindow::_190714_trakint_test1()
 
         ROS_INFO("Joint %s: %f", joint_names[i].c_str(), joint_values[i]);
       }
-      //std::copy(joint_values.begin(),joint_values.end(),arr);
-
-
 
       Moveit_Jointvalue_1 = QString::number(joint_values[0]*180/pi,'f',4).toDouble();
       Moveit_Jointvalue_2 = QString::number(joint_values[1]*180/pi,'f',4).toDouble();
@@ -2511,14 +2369,7 @@ void qtros::MainWindow::_190714_trakint_test1()
       qnode.move_group->setPoseTarget(target_pose);
    //   qnode.move_group->move();
       QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(Moveit_Jointvalue_1).arg(Moveit_Jointvalue_2).arg(Moveit_Jointvalue_3).arg(Moveit_Jointvalue_4).arg(Moveit_Jointvalue_5).arg(Moveit_Jointvalue_6);
-      //QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(qnode.joint_values[0]).arg(qnode.joint_values[1])
-      //    .arg(qnode.joint_values[4]).arg(qnode.joint_values[7]).arg(qnode.joint_values[8]).arg(qnode.joint_values[9]);
-      ROS_INFO("joint1: %f",Moveit_Jointvalue_1);
-      ROS_INFO("joint2: %f",Moveit_Jointvalue_2);
-      ROS_INFO("joint3: %f",Moveit_Jointvalue_3);
-      ROS_INFO("joint4: %f",Moveit_Jointvalue_4);
-      ROS_INFO("joint5: %f",Moveit_Jointvalue_5);
-      ROS_INFO("joint6: %f",Moveit_Jointvalue_6);
+
       QString msg = "Moving!";
       tcpSocket->write(Joint_data.toLocal8Bit().constData());
       ui.listWidget_Server_text->addItem(QString("%1").arg(Joint_data));
@@ -2570,7 +2421,7 @@ void qtros::MainWindow::_190714_trakint_test2()
 
         ROS_INFO("Joint %s: %f", joint_names[i].c_str(), joint_values[i]);
       }
-      //std::copy(joint_values.begin(),joint_values.end(),arr);
+
 
       Moveit_Jointvalue_1 = QString::number(joint_values[0]*180/pi,'f',4).toDouble();
       Moveit_Jointvalue_2 = QString::number(joint_values[1]*180/pi,'f',4).toDouble();
@@ -2582,14 +2433,7 @@ void qtros::MainWindow::_190714_trakint_test2()
       qnode.move_group->setPoseTarget(target_pose);
    //   qnode.move_group->move();
       QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(Moveit_Jointvalue_1).arg(Moveit_Jointvalue_2).arg(Moveit_Jointvalue_3).arg(Moveit_Jointvalue_4).arg(Moveit_Jointvalue_5).arg(Moveit_Jointvalue_6);
-      //QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(qnode.joint_values[0]).arg(qnode.joint_values[1])
-      //    .arg(qnode.joint_values[4]).arg(qnode.joint_values[7]).arg(qnode.joint_values[8]).arg(qnode.joint_values[9]);
-      ROS_INFO("joint1: %f",Moveit_Jointvalue_1);
-      ROS_INFO("joint2: %f",Moveit_Jointvalue_2);
-      ROS_INFO("joint3: %f",Moveit_Jointvalue_3);
-      ROS_INFO("joint4: %f",Moveit_Jointvalue_4);
-      ROS_INFO("joint5: %f",Moveit_Jointvalue_5);
-      ROS_INFO("joint6: %f",Moveit_Jointvalue_6);
+
       QString msg = "Moving!";
       tcpSocket->write(Joint_data.toLocal8Bit().constData());
       ui.listWidget_Server_text->addItem(QString("%1").arg(Joint_data));
@@ -2654,7 +2498,7 @@ void qtros::MainWindow::_190714_trakint_test3()
 
         ROS_INFO("Joint %s: %f", joint_names[i].c_str(), joint_values[i]);
       }
-      //std::copy(joint_values.begin(),joint_values.end(),arr);
+
 
       Moveit_Jointvalue_1 = QString::number(joint_values[0]*180/pi,'f',4).toDouble();
       Moveit_Jointvalue_2 = QString::number(joint_values[1]*180/pi,'f',4).toDouble();
@@ -2666,14 +2510,7 @@ void qtros::MainWindow::_190714_trakint_test3()
       qnode.move_group->setPoseTarget(target_pose);
    //   qnode.move_group->move();
       QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(Moveit_Jointvalue_1).arg(Moveit_Jointvalue_2).arg(Moveit_Jointvalue_3).arg(Moveit_Jointvalue_4).arg(Moveit_Jointvalue_5).arg(Moveit_Jointvalue_6);
-      //QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(qnode.joint_values[0]).arg(qnode.joint_values[1])
-      //    .arg(qnode.joint_values[4]).arg(qnode.joint_values[7]).arg(qnode.joint_values[8]).arg(qnode.joint_values[9]);
-      ROS_INFO("joint1: %f",Moveit_Jointvalue_1);
-      ROS_INFO("joint2: %f",Moveit_Jointvalue_2);
-      ROS_INFO("joint3: %f",Moveit_Jointvalue_3);
-      ROS_INFO("joint4: %f",Moveit_Jointvalue_4);
-      ROS_INFO("joint5: %f",Moveit_Jointvalue_5);
-      ROS_INFO("joint6: %f",Moveit_Jointvalue_6);
+
       QString msg = "Moving!";
       tcpSocket->write(Joint_data.toLocal8Bit().constData());
       ui.listWidget_Server_text->addItem(QString("%1").arg(Joint_data));
@@ -2684,11 +2521,8 @@ void qtros::MainWindow::_190714_trakint_test3()
        if(complete_pose)
           break;
       }
-
       ros::Duration(1).sleep();
-
       complete_pose = false;
-
 
     }
 }
@@ -2727,7 +2561,7 @@ void qtros::MainWindow::_190714_trakint_test4()
 
         ROS_INFO("Joint %s: %f", joint_names[i].c_str(), joint_values[i]);
       }
-      //std::copy(joint_values.begin(),joint_values.end(),arr);
+
 
       Moveit_Jointvalue_1 = QString::number(joint_values[0]*180/pi,'f',4).toDouble();
       Moveit_Jointvalue_2 = QString::number(joint_values[1]*180/pi,'f',4).toDouble();
@@ -2739,14 +2573,6 @@ void qtros::MainWindow::_190714_trakint_test4()
       qnode.move_group->setPoseTarget(target_pose);
    //   qnode.move_group->move();
       QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(Moveit_Jointvalue_1).arg(Moveit_Jointvalue_2).arg(Moveit_Jointvalue_3).arg(Moveit_Jointvalue_4).arg(Moveit_Jointvalue_5).arg(Moveit_Jointvalue_6);
-      //QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(qnode.joint_values[0]).arg(qnode.joint_values[1])
-      //    .arg(qnode.joint_values[4]).arg(qnode.joint_values[7]).arg(qnode.joint_values[8]).arg(qnode.joint_values[9]);
-      ROS_INFO("joint1: %f",Moveit_Jointvalue_1);
-      ROS_INFO("joint2: %f",Moveit_Jointvalue_2);
-      ROS_INFO("joint3: %f",Moveit_Jointvalue_3);
-      ROS_INFO("joint4: %f",Moveit_Jointvalue_4);
-      ROS_INFO("joint5: %f",Moveit_Jointvalue_5);
-      ROS_INFO("joint6: %f",Moveit_Jointvalue_6);
       QString msg = "Moving!";
       tcpSocket->write(Joint_data.toLocal8Bit().constData());
       ui.listWidget_Server_text->addItem(QString("%1").arg(Joint_data));
@@ -2761,8 +2587,6 @@ void qtros::MainWindow::_190714_trakint_test4()
       ros::Duration(1).sleep();
 
       complete_pose = false;
-
-
     }
 }
 
@@ -2800,9 +2624,6 @@ void qtros::MainWindow::_190714_trakint_test_sona_500x300_point()
 
         ROS_INFO("Joint %s: %f", joint_names[i].c_str(), joint_values[i]);
       }
-      //std::copy(joint_values.begin(),joint_values.end(),arr);
-
-
 
       Moveit_Jointvalue_1 = QString::number(joint_values[0]*180/pi,'f',4).toDouble();
       Moveit_Jointvalue_2 = QString::number(joint_values[1]*180/pi,'f',4).toDouble();
@@ -2814,14 +2635,7 @@ void qtros::MainWindow::_190714_trakint_test_sona_500x300_point()
       qnode.move_group->setPoseTarget(target_pose);
    //   qnode.move_group->move();
       QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(Moveit_Jointvalue_1).arg(Moveit_Jointvalue_2).arg(Moveit_Jointvalue_3).arg(Moveit_Jointvalue_4).arg(Moveit_Jointvalue_5).arg(Moveit_Jointvalue_6);
-      //QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(qnode.joint_values[0]).arg(qnode.joint_values[1])
-      //    .arg(qnode.joint_values[4]).arg(qnode.joint_values[7]).arg(qnode.joint_values[8]).arg(qnode.joint_values[9]);
-      ROS_INFO("joint1: %f",Moveit_Jointvalue_1);
-      ROS_INFO("joint2: %f",Moveit_Jointvalue_2);
-      ROS_INFO("joint3: %f",Moveit_Jointvalue_3);
-      ROS_INFO("joint4: %f",Moveit_Jointvalue_4);
-      ROS_INFO("joint5: %f",Moveit_Jointvalue_5);
-      ROS_INFO("joint6: %f",Moveit_Jointvalue_6);
+
       QString msg = "Moving!";
       tcpSocket->write(Joint_data.toLocal8Bit().constData());
       ui.listWidget_Server_text->addItem(QString("%1").arg(Joint_data));
@@ -2871,9 +2685,6 @@ void qtros::MainWindow::_190714_trakint_test_sona_700x300_point()
 
         ROS_INFO("Joint %s: %f", joint_names[i].c_str(), joint_values[i]);
       }
-      //std::copy(joint_values.begin(),joint_values.end(),arr);
-
-
 
       Moveit_Jointvalue_1 = QString::number(joint_values[0]*180/pi,'f',4).toDouble();
       Moveit_Jointvalue_2 = QString::number(joint_values[1]*180/pi,'f',4).toDouble();
@@ -2885,14 +2696,7 @@ void qtros::MainWindow::_190714_trakint_test_sona_700x300_point()
       qnode.move_group->setPoseTarget(target_pose);
    //   qnode.move_group->move();
       QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(Moveit_Jointvalue_1).arg(Moveit_Jointvalue_2).arg(Moveit_Jointvalue_3).arg(Moveit_Jointvalue_4).arg(Moveit_Jointvalue_5).arg(Moveit_Jointvalue_6);
-      //QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(qnode.joint_values[0]).arg(qnode.joint_values[1])
-      //    .arg(qnode.joint_values[4]).arg(qnode.joint_values[7]).arg(qnode.joint_values[8]).arg(qnode.joint_values[9]);
-      ROS_INFO("joint1: %f",Moveit_Jointvalue_1);
-      ROS_INFO("joint2: %f",Moveit_Jointvalue_2);
-      ROS_INFO("joint3: %f",Moveit_Jointvalue_3);
-      ROS_INFO("joint4: %f",Moveit_Jointvalue_4);
-      ROS_INFO("joint5: %f",Moveit_Jointvalue_5);
-      ROS_INFO("joint6: %f",Moveit_Jointvalue_6);
+
       QString msg = "Moving!";
       tcpSocket->write(Joint_data.toLocal8Bit().constData());
       ui.listWidget_Server_text->addItem(QString("%1").arg(Joint_data));
@@ -2942,10 +2746,6 @@ void qtros::MainWindow::_190714_trakint_test_sona_700x200_point()
 
         ROS_INFO("Joint %s: %f", joint_names[i].c_str(), joint_values[i]);
       }
-      //std::copy(joint_values.begin(),joint_values.end(),arr);
-
-
-
       Moveit_Jointvalue_1 = QString::number(joint_values[0]*180/pi,'f',4).toDouble();
       Moveit_Jointvalue_2 = QString::number(joint_values[1]*180/pi,'f',4).toDouble();
       Moveit_Jointvalue_3 = QString::number(joint_values[4]*180/pi,'f',4).toDouble();
@@ -2956,14 +2756,6 @@ void qtros::MainWindow::_190714_trakint_test_sona_700x200_point()
       qnode.move_group->setPoseTarget(target_pose);
    //   qnode.move_group->move();
       QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(Moveit_Jointvalue_1).arg(Moveit_Jointvalue_2).arg(Moveit_Jointvalue_3).arg(Moveit_Jointvalue_4).arg(Moveit_Jointvalue_5).arg(Moveit_Jointvalue_6);
-      //QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(qnode.joint_values[0]).arg(qnode.joint_values[1])
-      //    .arg(qnode.joint_values[4]).arg(qnode.joint_values[7]).arg(qnode.joint_values[8]).arg(qnode.joint_values[9]);
-      ROS_INFO("joint1: %f",Moveit_Jointvalue_1);
-      ROS_INFO("joint2: %f",Moveit_Jointvalue_2);
-      ROS_INFO("joint3: %f",Moveit_Jointvalue_3);
-      ROS_INFO("joint4: %f",Moveit_Jointvalue_4);
-      ROS_INFO("joint5: %f",Moveit_Jointvalue_5);
-      ROS_INFO("joint6: %f",Moveit_Jointvalue_6);
       QString msg = "Moving!";
       tcpSocket->write(Joint_data.toLocal8Bit().constData());
       ui.listWidget_Server_text->addItem(QString("%1").arg(Joint_data));
@@ -2979,8 +2771,6 @@ void qtros::MainWindow::_190714_trakint_test_sona_700x200_point()
       complete_pose = false;
     }
 }
-
-
 
 void qtros::MainWindow::tracking_test1()
 {
@@ -3013,9 +2803,6 @@ void qtros::MainWindow::tracking_test1()
 
         ROS_INFO("Joint %s: %f", joint_names[i].c_str(), joint_values[i]);
       }
-      //std::copy(joint_values.begin(),joint_values.end(),arr);
-
-
 
       Moveit_Jointvalue_1 = QString::number(joint_values[0]*180/pi,'f',4).toDouble();
       Moveit_Jointvalue_2 = QString::number(joint_values[1]*180/pi,'f',4).toDouble();
@@ -3027,14 +2814,7 @@ void qtros::MainWindow::tracking_test1()
       qnode.move_group->setPoseTarget(target_pose);
    //   qnode.move_group->move();
       QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(Moveit_Jointvalue_1).arg(Moveit_Jointvalue_2).arg(Moveit_Jointvalue_3).arg(Moveit_Jointvalue_4).arg(Moveit_Jointvalue_5).arg(Moveit_Jointvalue_6);
-      //QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(qnode.joint_values[0]).arg(qnode.joint_values[1])
-      //    .arg(qnode.joint_values[4]).arg(qnode.joint_values[7]).arg(qnode.joint_values[8]).arg(qnode.joint_values[9]);
-      ROS_INFO("joint1: %f",Moveit_Jointvalue_1);
-      ROS_INFO("joint2: %f",Moveit_Jointvalue_2);
-      ROS_INFO("joint3: %f",Moveit_Jointvalue_3);
-      ROS_INFO("joint4: %f",Moveit_Jointvalue_4);
-      ROS_INFO("joint5: %f",Moveit_Jointvalue_5);
-      ROS_INFO("joint6: %f",Moveit_Jointvalue_6);
+
       QString msg = "Moving!";
       tcpSocket->write(Joint_data.toLocal8Bit().constData());
       ui.listWidget_Server_text->addItem(QString("%1").arg(Joint_data));
@@ -3087,8 +2867,6 @@ void qtros::MainWindow::tracking_test1()
 
                 ROS_INFO("Joint %s: %f", joint_names[i].c_str(), joint_values[i]);
               }
-              //std::copy(joint_values.begin(),joint_values.end(),arr);
-
 
 
               Moveit_Jointvalue_1 = QString::number(joint_values[0]*180/pi,'f',4).toDouble();
@@ -3101,14 +2879,7 @@ void qtros::MainWindow::tracking_test1()
               qnode.move_group->setPoseTarget(target_pose);
            //   qnode.move_group->move();
               QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(Moveit_Jointvalue_1).arg(Moveit_Jointvalue_2).arg(Moveit_Jointvalue_3).arg(Moveit_Jointvalue_4).arg(Moveit_Jointvalue_5).arg(Moveit_Jointvalue_6);
-              //QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(qnode.joint_values[0]).arg(qnode.joint_values[1])
-              //    .arg(qnode.joint_values[4]).arg(qnode.joint_values[7]).arg(qnode.joint_values[8]).arg(qnode.joint_values[9]);
-              ROS_INFO("joint1: %f",Moveit_Jointvalue_1);
-              ROS_INFO("joint2: %f",Moveit_Jointvalue_2);
-              ROS_INFO("joint3: %f",Moveit_Jointvalue_3);
-              ROS_INFO("joint4: %f",Moveit_Jointvalue_4);
-              ROS_INFO("joint5: %f",Moveit_Jointvalue_5);
-              ROS_INFO("joint6: %f",Moveit_Jointvalue_6);
+
               QString msg = "Moving!";
               tcpSocket->write(Joint_data.toLocal8Bit().constData());
               ui.listWidget_Server_text->addItem(QString("%1").arg(Joint_data));
@@ -3170,9 +2941,6 @@ void qtros::MainWindow::tracking()
 
             ROS_INFO("Joint %s: %f", joint_names[i].c_str(), joint_values[i]);
           }
-          //std::copy(joint_values.begin(),joint_values.end(),arr);
-
-
 
           Moveit_Jointvalue_1 = QString::number(joint_values[0]*180/pi,'f',4).toDouble();
           Moveit_Jointvalue_2 = QString::number(joint_values[1]*180/pi,'f',4).toDouble();
@@ -3184,14 +2952,7 @@ void qtros::MainWindow::tracking()
           qnode.move_group->setPoseTarget(target_pose);
        //   qnode.move_group->move();
           QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(Moveit_Jointvalue_1).arg(Moveit_Jointvalue_2).arg(Moveit_Jointvalue_3).arg(Moveit_Jointvalue_4).arg(Moveit_Jointvalue_5).arg(Moveit_Jointvalue_6);
-          //QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(qnode.joint_values[0]).arg(qnode.joint_values[1])
-          //    .arg(qnode.joint_values[4]).arg(qnode.joint_values[7]).arg(qnode.joint_values[8]).arg(qnode.joint_values[9]);
-          ROS_INFO("joint1: %f",Moveit_Jointvalue_1);
-          ROS_INFO("joint2: %f",Moveit_Jointvalue_2);
-          ROS_INFO("joint3: %f",Moveit_Jointvalue_3);
-          ROS_INFO("joint4: %f",Moveit_Jointvalue_4);
-          ROS_INFO("joint5: %f",Moveit_Jointvalue_5);
-          ROS_INFO("joint6: %f",Moveit_Jointvalue_6);
+
           QString msg = "Moving!";
           tcpSocket->write(Joint_data.toLocal8Bit().constData());
           ui.listWidget_Server_text->addItem(QString("%1").arg(Joint_data));
@@ -3253,10 +3014,6 @@ void qtros::MainWindow::Task_pick_and_place() //here3
 
               ROS_INFO("Joint %s: %f", joint_names[i].c_str(), joint_values[i]);
             }
-            //std::copy(joint_values.begin(),joint_values.end(),arr);
-
-
-
             Moveit_Jointvalue_1 = QString::number(joint_values[0]*180/pi,'f',4).toDouble();
             Moveit_Jointvalue_2 = QString::number(joint_values[1]*180/pi,'f',4).toDouble();
             Moveit_Jointvalue_3 = QString::number(joint_values[4]*180/pi,'f',4).toDouble();
@@ -3267,14 +3024,7 @@ void qtros::MainWindow::Task_pick_and_place() //here3
             qnode.move_group->setPoseTarget(target_pose);
          //   qnode.move_group->move();
             QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(Moveit_Jointvalue_1).arg(Moveit_Jointvalue_2).arg(Moveit_Jointvalue_3).arg(Moveit_Jointvalue_4).arg(Moveit_Jointvalue_5).arg(Moveit_Jointvalue_6);
-            //QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(qnode.joint_values[0]).arg(qnode.joint_values[1])
-            //    .arg(qnode.joint_values[4]).arg(qnode.joint_values[7]).arg(qnode.joint_values[8]).arg(qnode.joint_values[9]);
-            ROS_INFO("joint1: %f",Moveit_Jointvalue_1);
-            ROS_INFO("joint2: %f",Moveit_Jointvalue_2);
-            ROS_INFO("joint3: %f",Moveit_Jointvalue_3);
-            ROS_INFO("joint4: %f",Moveit_Jointvalue_4);
-            ROS_INFO("joint5: %f",Moveit_Jointvalue_5);
-            ROS_INFO("joint6: %f",Moveit_Jointvalue_6);
+
             QString msg = "Moving!";
             tcpSocket->write(Joint_data.toLocal8Bit().constData());
             ui.listWidget_Server_text->addItem(QString("%1").arg(Joint_data));
@@ -3311,7 +3061,6 @@ void qtros::MainWindow::Task_pick_and_place() //here3
           double rotate_z = (-117)*pi/180;
 
 
-
         tf::Quaternion q;
         q.setRPY(rotate_x,rotate_y,rotate_z);
         target_pose.orientation.x = q.x();
@@ -3333,9 +3082,6 @@ void qtros::MainWindow::Task_pick_and_place() //here3
 
             ROS_INFO("Joint %s: %f", joint_names[i].c_str(), joint_values[i]);
           }
-          //std::copy(joint_values.begin(),joint_values.end(),arr);
-
-
 
           Moveit_Jointvalue_1 = QString::number(joint_values[0]*180/pi,'f',4).toDouble();
           Moveit_Jointvalue_2 = QString::number(joint_values[1]*180/pi,'f',4).toDouble();
@@ -3347,14 +3093,7 @@ void qtros::MainWindow::Task_pick_and_place() //here3
           qnode.move_group->setPoseTarget(target_pose);
        //   qnode.move_group->move();
           QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(Moveit_Jointvalue_1).arg(Moveit_Jointvalue_2).arg(Moveit_Jointvalue_3).arg(Moveit_Jointvalue_4).arg(Moveit_Jointvalue_5).arg(Moveit_Jointvalue_6);
-          //QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(qnode.joint_values[0]).arg(qnode.joint_values[1])
-          //    .arg(qnode.joint_values[4]).arg(qnode.joint_values[7]).arg(qnode.joint_values[8]).arg(qnode.joint_values[9]);
-          ROS_INFO("joint1: %f",Moveit_Jointvalue_1);
-          ROS_INFO("joint2: %f",Moveit_Jointvalue_2);
-          ROS_INFO("joint3: %f",Moveit_Jointvalue_3);
-          ROS_INFO("joint4: %f",Moveit_Jointvalue_4);
-          ROS_INFO("joint5: %f",Moveit_Jointvalue_5);
-          ROS_INFO("joint6: %f",Moveit_Jointvalue_6);
+
           QString msg = "Moving!";
           tcpSocket->write(Joint_data.toLocal8Bit().constData());
           ui.listWidget_Server_text->addItem(QString("%1").arg(Joint_data));
@@ -3415,9 +3154,6 @@ void qtros::MainWindow::Task_pick_and_place() //here3
 
             ROS_INFO("Joint %s: %f", joint_names[i].c_str(), joint_values[i]);
           }
-          //std::copy(joint_values.begin(),joint_values.end(),arr);
-
-
 
           Moveit_Jointvalue_1 = QString::number(joint_values[0]*180/pi,'f',4).toDouble();
           Moveit_Jointvalue_2 = QString::number(joint_values[1]*180/pi,'f',4).toDouble();
@@ -3429,14 +3165,7 @@ void qtros::MainWindow::Task_pick_and_place() //here3
           qnode.move_group->setPoseTarget(target_pose);
         //  qnode.move_group->move();
           QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(Moveit_Jointvalue_1).arg(Moveit_Jointvalue_2).arg(Moveit_Jointvalue_3).arg(Moveit_Jointvalue_4).arg(Moveit_Jointvalue_5).arg(Moveit_Jointvalue_6);
-          //QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(qnode.joint_values[0]).arg(qnode.joint_values[1])
-          //    .arg(qnode.joint_values[4]).arg(qnode.joint_values[7]).arg(qnode.joint_values[8]).arg(qnode.joint_values[9]);
-          ROS_INFO("joint1: %f",Moveit_Jointvalue_1);
-          ROS_INFO("joint2: %f",Moveit_Jointvalue_2);
-          ROS_INFO("joint3: %f",Moveit_Jointvalue_3);
-          ROS_INFO("joint4: %f",Moveit_Jointvalue_4);
-          ROS_INFO("joint5: %f",Moveit_Jointvalue_5);
-          ROS_INFO("joint6: %f",Moveit_Jointvalue_6);
+
           QString msg = "Moving!";
           tcpSocket->write(Joint_data.toLocal8Bit().constData());
           ui.listWidget_Server_text->addItem(QString("%1").arg(Joint_data));
@@ -3493,10 +3222,6 @@ void qtros::MainWindow::Task_pick_and_place() //here3
 
             ROS_INFO("Joint %s: %f", joint_names[i].c_str(), joint_values[i]);
           }
-          //std::copy(joint_values.begin(),joint_values.end(),arr);
-
-
-
           Moveit_Jointvalue_1 = QString::number(joint_values[0]*180/pi,'f',4).toDouble();
           Moveit_Jointvalue_2 = QString::number(joint_values[1]*180/pi,'f',4).toDouble();
           Moveit_Jointvalue_3 = QString::number(joint_values[4]*180/pi,'f',4).toDouble();
@@ -3507,14 +3232,7 @@ void qtros::MainWindow::Task_pick_and_place() //here3
           qnode.move_group->setPoseTarget(target_pose);
        //   qnode.move_group->move();
           QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(Moveit_Jointvalue_1).arg(Moveit_Jointvalue_2).arg(Moveit_Jointvalue_3).arg(Moveit_Jointvalue_4).arg(Moveit_Jointvalue_5).arg(Moveit_Jointvalue_6);
-          //QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(qnode.joint_values[0]).arg(qnode.joint_values[1])
-          //    .arg(qnode.joint_values[4]).arg(qnode.joint_values[7]).arg(qnode.joint_values[8]).arg(qnode.joint_values[9]);
-          ROS_INFO("joint1: %f",Moveit_Jointvalue_1);
-          ROS_INFO("joint2: %f",Moveit_Jointvalue_2);
-          ROS_INFO("joint3: %f",Moveit_Jointvalue_3);
-          ROS_INFO("joint4: %f",Moveit_Jointvalue_4);
-          ROS_INFO("joint5: %f",Moveit_Jointvalue_5);
-          ROS_INFO("joint6: %f",Moveit_Jointvalue_6);
+
           QString msg = "Moving!";
           tcpSocket->write(Joint_data.toLocal8Bit().constData());
           ui.listWidget_Server_text->addItem(QString("%1").arg(Joint_data));
@@ -3531,11 +3249,6 @@ void qtros::MainWindow::Task_pick_and_place() //here3
 
           complete_pose = false;
           turn = 4;
-
-
-
-
-
 
         }
         else
@@ -3579,10 +3292,6 @@ void qtros::MainWindow::Task_pick_and_place() //here3
 
             ROS_INFO("Joint %s: %f", joint_names[i].c_str(), joint_values[i]);
           }
-          //std::copy(joint_values.begin(),joint_values.end(),arr);
-
-
-
           Moveit_Jointvalue_1 = QString::number(joint_values[0]*180/pi,'f',4).toDouble();
           Moveit_Jointvalue_2 = QString::number(joint_values[1]*180/pi,'f',4).toDouble();
           Moveit_Jointvalue_3 = QString::number(joint_values[4]*180/pi,'f',4).toDouble();
@@ -3593,14 +3302,8 @@ void qtros::MainWindow::Task_pick_and_place() //here3
           qnode.move_group->setPoseTarget(target_pose);
        //   qnode.move_group->move();
           QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(Moveit_Jointvalue_1).arg(Moveit_Jointvalue_2).arg(Moveit_Jointvalue_3).arg(Moveit_Jointvalue_4).arg(Moveit_Jointvalue_5).arg(Moveit_Jointvalue_6);
-          //QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(qnode.joint_values[0]).arg(qnode.joint_values[1])
-          //    .arg(qnode.joint_values[4]).arg(qnode.joint_values[7]).arg(qnode.joint_values[8]).arg(qnode.joint_values[9]);
-          ROS_INFO("joint1: %f",Moveit_Jointvalue_1);
-          ROS_INFO("joint2: %f",Moveit_Jointvalue_2);
-          ROS_INFO("joint3: %f",Moveit_Jointvalue_3);
-          ROS_INFO("joint4: %f",Moveit_Jointvalue_4);
-          ROS_INFO("joint5: %f",Moveit_Jointvalue_5);
-          ROS_INFO("joint6: %f",Moveit_Jointvalue_6);
+
+
           QString msg = "Moving!";
           tcpSocket->write(Joint_data.toLocal8Bit().constData());
           ui.listWidget_Server_text->addItem(QString("%1").arg(Joint_data));
@@ -3611,28 +3314,17 @@ void qtros::MainWindow::Task_pick_and_place() //here3
            if(complete_pose)
               break;
           }
-
-
           ros::Duration(1).sleep();
-
           Gripper_Open();
-
           ros::Duration(1).sleep();
-
-
           complete_pose = false;
           turn = 5;
-
-
-
-
 
         }
         else
         {
           ROS_INFO("Did not find IK solution");
         }
-
 
         break;
       }
@@ -3669,9 +3361,6 @@ void qtros::MainWindow::Task_pick_and_place() //here3
 
             ROS_INFO("Joint %s: %f", joint_names[i].c_str(), joint_values[i]);
           }
-          //std::copy(joint_values.begin(),joint_values.end(),arr);
-
-
 
           Moveit_Jointvalue_1 = QString::number(joint_values[0]*180/pi,'f',4).toDouble();
           Moveit_Jointvalue_2 = QString::number(joint_values[1]*180/pi,'f',4).toDouble();
@@ -3683,14 +3372,7 @@ void qtros::MainWindow::Task_pick_and_place() //here3
           qnode.move_group->setPoseTarget(target_pose);
        //   qnode.move_group->move();
           QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(Moveit_Jointvalue_1).arg(Moveit_Jointvalue_2).arg(Moveit_Jointvalue_3).arg(Moveit_Jointvalue_4).arg(Moveit_Jointvalue_5).arg(Moveit_Jointvalue_6);
-          //QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(qnode.joint_values[0]).arg(qnode.joint_values[1])
-          //    .arg(qnode.joint_values[4]).arg(qnode.joint_values[7]).arg(qnode.joint_values[8]).arg(qnode.joint_values[9]);
-          ROS_INFO("joint1: %f",Moveit_Jointvalue_1);
-          ROS_INFO("joint2: %f",Moveit_Jointvalue_2);
-          ROS_INFO("joint3: %f",Moveit_Jointvalue_3);
-          ROS_INFO("joint4: %f",Moveit_Jointvalue_4);
-          ROS_INFO("joint5: %f",Moveit_Jointvalue_5);
-          ROS_INFO("joint6: %f",Moveit_Jointvalue_6);
+
           QString msg = "Moving!";
           tcpSocket->write(Joint_data.toLocal8Bit().constData());
           ui.listWidget_Server_text->addItem(QString("%1").arg(Joint_data));
@@ -3750,9 +3432,6 @@ void qtros::MainWindow::Task_pick_and_place() //here3
 
             ROS_INFO("Joint %s: %f", joint_names[i].c_str(), joint_values[i]);
           }
-          //std::copy(joint_values.begin(),joint_values.end(),arr);
-
-
 
           Moveit_Jointvalue_1 = QString::number(joint_values[0]*180/pi,'f',4).toDouble();
           Moveit_Jointvalue_2 = QString::number(joint_values[1]*180/pi,'f',4).toDouble();
@@ -3764,14 +3443,7 @@ void qtros::MainWindow::Task_pick_and_place() //here3
           qnode.move_group->setPoseTarget(target_pose);
        //   qnode.move_group->move();
           QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(Moveit_Jointvalue_1).arg(Moveit_Jointvalue_2).arg(Moveit_Jointvalue_3).arg(Moveit_Jointvalue_4).arg(Moveit_Jointvalue_5).arg(Moveit_Jointvalue_6);
-          //QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(qnode.joint_values[0]).arg(qnode.joint_values[1])
-          //    .arg(qnode.joint_values[4]).arg(qnode.joint_values[7]).arg(qnode.joint_values[8]).arg(qnode.joint_values[9]);
-          ROS_INFO("joint1: %f",Moveit_Jointvalue_1);
-          ROS_INFO("joint2: %f",Moveit_Jointvalue_2);
-          ROS_INFO("joint3: %f",Moveit_Jointvalue_3);
-          ROS_INFO("joint4: %f",Moveit_Jointvalue_4);
-          ROS_INFO("joint5: %f",Moveit_Jointvalue_5);
-          ROS_INFO("joint6: %f",Moveit_Jointvalue_6);
+
           QString msg = "Moving!";
           tcpSocket->write(Joint_data.toLocal8Bit().constData());
           ui.listWidget_Server_text->addItem(QString("%1").arg(Joint_data));
@@ -3834,9 +3506,6 @@ void qtros::MainWindow::Task_pick_and_place() //here3
 
             ROS_INFO("Joint %s: %f", joint_names[i].c_str(), joint_values[i]);
           }
-          //std::copy(joint_values.begin(),joint_values.end(),arr);
-
-
 
           Moveit_Jointvalue_1 = QString::number(joint_values[0]*180/pi,'f',4).toDouble();
           Moveit_Jointvalue_2 = QString::number(joint_values[1]*180/pi,'f',4).toDouble();
@@ -3848,14 +3517,7 @@ void qtros::MainWindow::Task_pick_and_place() //here3
           qnode.move_group->setPoseTarget(target_pose);
        //   qnode.move_group->move();
           QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(Moveit_Jointvalue_1).arg(Moveit_Jointvalue_2).arg(Moveit_Jointvalue_3).arg(Moveit_Jointvalue_4).arg(Moveit_Jointvalue_5).arg(Moveit_Jointvalue_6);
-          //QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(qnode.joint_values[0]).arg(qnode.joint_values[1])
-          //    .arg(qnode.joint_values[4]).arg(qnode.joint_values[7]).arg(qnode.joint_values[8]).arg(qnode.joint_values[9]);
-          ROS_INFO("joint1: %f",Moveit_Jointvalue_1);
-          ROS_INFO("joint2: %f",Moveit_Jointvalue_2);
-          ROS_INFO("joint3: %f",Moveit_Jointvalue_3);
-          ROS_INFO("joint4: %f",Moveit_Jointvalue_4);
-          ROS_INFO("joint5: %f",Moveit_Jointvalue_5);
-          ROS_INFO("joint6: %f",Moveit_Jointvalue_6);
+
           QString msg = "Moving!";
           tcpSocket->write(Joint_data.toLocal8Bit().constData());
           ui.listWidget_Server_text->addItem(QString("%1").arg(Joint_data));
@@ -3914,10 +3576,6 @@ void qtros::MainWindow::Task_pick_and_place() //here3
 
             ROS_INFO("Joint %s: %f", joint_names[i].c_str(), joint_values[i]);
           }
-          //std::copy(joint_values.begin(),joint_values.end(),arr);
-
-
-
           Moveit_Jointvalue_1 = QString::number(joint_values[0]*180/pi,'f',4).toDouble();
           Moveit_Jointvalue_2 = QString::number(joint_values[1]*180/pi,'f',4).toDouble();
           Moveit_Jointvalue_3 = QString::number(joint_values[4]*180/pi,'f',4).toDouble();
@@ -3928,14 +3586,7 @@ void qtros::MainWindow::Task_pick_and_place() //here3
           qnode.move_group->setPoseTarget(target_pose);
        //   qnode.move_group->move();
           QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(Moveit_Jointvalue_1).arg(Moveit_Jointvalue_2).arg(Moveit_Jointvalue_3).arg(Moveit_Jointvalue_4).arg(Moveit_Jointvalue_5).arg(Moveit_Jointvalue_6);
-          //QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(qnode.joint_values[0]).arg(qnode.joint_values[1])
-          //    .arg(qnode.joint_values[4]).arg(qnode.joint_values[7]).arg(qnode.joint_values[8]).arg(qnode.joint_values[9]);
-          ROS_INFO("joint1: %f",Moveit_Jointvalue_1);
-          ROS_INFO("joint2: %f",Moveit_Jointvalue_2);
-          ROS_INFO("joint3: %f",Moveit_Jointvalue_3);
-          ROS_INFO("joint4: %f",Moveit_Jointvalue_4);
-          ROS_INFO("joint5: %f",Moveit_Jointvalue_5);
-          ROS_INFO("joint6: %f",Moveit_Jointvalue_6);
+
           QString msg = "Moving!";
           tcpSocket->write(Joint_data.toLocal8Bit().constData());
           ui.listWidget_Server_text->addItem(QString("%1").arg(Joint_data));
@@ -3946,10 +3597,7 @@ void qtros::MainWindow::Task_pick_and_place() //here3
            if(complete_pose)
               break;
           }
-
           ros::Duration(1).sleep();
-
-
           complete_pose = false;
           turn = 9;
 
@@ -3994,10 +3642,6 @@ void qtros::MainWindow::Task_pick_and_place() //here3
 
             ROS_INFO("Joint %s: %f", joint_names[i].c_str(), joint_values[i]);
           }
-          //std::copy(joint_values.begin(),joint_values.end(),arr);
-
-
-
           Moveit_Jointvalue_1 = QString::number(joint_values[0]*180/pi,'f',4).toDouble();
           Moveit_Jointvalue_2 = QString::number(joint_values[1]*180/pi,'f',4).toDouble();
           Moveit_Jointvalue_3 = QString::number(joint_values[4]*180/pi,'f',4).toDouble();
@@ -4008,14 +3652,7 @@ void qtros::MainWindow::Task_pick_and_place() //here3
           qnode.move_group->setPoseTarget(target_pose);
        //   qnode.move_group->move();
           QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(Moveit_Jointvalue_1).arg(Moveit_Jointvalue_2).arg(Moveit_Jointvalue_3).arg(Moveit_Jointvalue_4).arg(Moveit_Jointvalue_5).arg(Moveit_Jointvalue_6);
-          //QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(qnode.joint_values[0]).arg(qnode.joint_values[1])
-          //    .arg(qnode.joint_values[4]).arg(qnode.joint_values[7]).arg(qnode.joint_values[8]).arg(qnode.joint_values[9]);
-          ROS_INFO("joint1: %f",Moveit_Jointvalue_1);
-          ROS_INFO("joint2: %f",Moveit_Jointvalue_2);
-          ROS_INFO("joint3: %f",Moveit_Jointvalue_3);
-          ROS_INFO("joint4: %f",Moveit_Jointvalue_4);
-          ROS_INFO("joint5: %f",Moveit_Jointvalue_5);
-          ROS_INFO("joint6: %f",Moveit_Jointvalue_6);
+
           QString msg = "Moving!";
           tcpSocket->write(Joint_data.toLocal8Bit().constData());
           ui.listWidget_Server_text->addItem(QString("%1").arg(Joint_data));
@@ -4028,23 +3665,15 @@ void qtros::MainWindow::Task_pick_and_place() //here3
           }
 
           ros::Duration(1).sleep();
-
           Gripper_Open();
-
           ros::Duration(1).sleep();
-
-
-
           complete_pose = false;
           turn = 10;
-
         }
         else
         {
           ROS_INFO("Did not find IK solution");
         }
-
-
         break;
       }
       case 10:
@@ -4056,7 +3685,6 @@ void qtros::MainWindow::Task_pick_and_place() //here3
           double rotate_x = 117*pi/180;
           double rotate_y = (-90)*pi/180;
           double rotate_z = (-117)*pi/180;
-
 
         tf::Quaternion q;
         q.setRPY(rotate_x,rotate_y,rotate_z);
@@ -4079,9 +3707,6 @@ void qtros::MainWindow::Task_pick_and_place() //here3
 
             ROS_INFO("Joint %s: %f", joint_names[i].c_str(), joint_values[i]);
           }
-          //std::copy(joint_values.begin(),joint_values.end(),arr);
-
-
 
           Moveit_Jointvalue_1 = QString::number(joint_values[0]*180/pi,'f',4).toDouble();
           Moveit_Jointvalue_2 = QString::number(joint_values[1]*180/pi,'f',4).toDouble();
@@ -4093,14 +3718,7 @@ void qtros::MainWindow::Task_pick_and_place() //here3
           qnode.move_group->setPoseTarget(target_pose);
        //   qnode.move_group->move();
           QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(Moveit_Jointvalue_1).arg(Moveit_Jointvalue_2).arg(Moveit_Jointvalue_3).arg(Moveit_Jointvalue_4).arg(Moveit_Jointvalue_5).arg(Moveit_Jointvalue_6);
-          //QString Joint_data = QString("J1%1J2%2J3%3J4%4J5%5J6%6").arg(qnode.joint_values[0]).arg(qnode.joint_values[1])
-          //    .arg(qnode.joint_values[4]).arg(qnode.joint_values[7]).arg(qnode.joint_values[8]).arg(qnode.joint_values[9]);
-          ROS_INFO("joint1: %f",Moveit_Jointvalue_1);
-          ROS_INFO("joint2: %f",Moveit_Jointvalue_2);
-          ROS_INFO("joint3: %f",Moveit_Jointvalue_3);
-          ROS_INFO("joint4: %f",Moveit_Jointvalue_4);
-          ROS_INFO("joint5: %f",Moveit_Jointvalue_5);
-          ROS_INFO("joint6: %f",Moveit_Jointvalue_6);
+
           QString msg = "Moving!";
           tcpSocket->write(Joint_data.toLocal8Bit().constData());
           ui.listWidget_Server_text->addItem(QString("%1").arg(Joint_data));
