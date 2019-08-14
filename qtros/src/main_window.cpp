@@ -402,10 +402,14 @@ void qtros::MainWindow::on_btnMoveit_setJointValue_clicked()
   rpy.y = pitch;
   rpy.z = yaw;
 
+  //double qx = pose.
   /////////////////
 
   ROS_INFO_STREAM(current_pose.pose.position.x <<"," << current_pose.pose.position.y <<"," << current_pose.pose.position.z <<"\n" <<
                   rpy.x<<"," << rpy.y<<"," << rpy.z);
+  ROS_INFO_STREAM(current_pose.pose.orientation.x <<"," << current_pose.pose.orientation.y <<"," << current_pose.pose.orientation.z<<","<<
+                  current_pose.pose.orientation.w);
+
 
 }
 
