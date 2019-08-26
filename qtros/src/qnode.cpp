@@ -236,7 +236,7 @@ void QNode::detectLabeledCallback(const std_msgs::Float32MultiArrayConstPtr& msg
 
     //jinyoung
      _labeledCenter_calculate_x = 620 - (_labeledCenter_y - 480/2) * _dist_pixel_v; //camera coordinate 457, 471;
-     _labeledCenter_calculate_y = 260 - (_labeledCenter_x - 640/2) * _dist_pixel_u;
+     _labeledCenter_calculate_y = 440 - (_labeledCenter_x - 640/2) * _dist_pixel_u;
 
      _expected_y =  _pre_labeledCenter_calculate_y - _labeledCenter_calculate_y;
 

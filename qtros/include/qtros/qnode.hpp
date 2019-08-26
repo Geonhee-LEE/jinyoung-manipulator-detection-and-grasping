@@ -120,8 +120,13 @@ public:
   float _pre_labeledCenter_x;
   float _pre_labeledCenter_y;
 
+  //float _dist_pixel_u = 1.923;
+  //float _dist_pixel_v = 1.681;
+
+  //Calibration offset
   float _dist_pixel_u = 1.923;
-  float _dist_pixel_v = 1.681;
+  float _dist_pixel_v = 2.0588;
+
 
   float _labeledCenter_calculate_x; //camera coordinate 457, 471;
   float _labeledCenter_calculate_y;

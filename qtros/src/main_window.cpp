@@ -2188,9 +2188,9 @@ void qtros::MainWindow::_190714_trakint_test()
 
     point_enclosure_x = qnode._labeledCenter_calculate_x;
 
-    target_pose.position.x = 700;
+    target_pose.position.x = 750;
     target_pose.position.y = 0;
-    target_pose.position.z = 40;
+    target_pose.position.z = 49;
     double rotate_x = _task_roll*pi/180;
     double rotate_y = _task_pitch*pi/180;
     double rotate_z = _task_yaw*pi/180;
@@ -2253,7 +2253,7 @@ void qtros::MainWindow::_190714_trakint_test()
 
     while (true) {
 
-        if(qnode._labeledCenter_calculate_y < 500 && qnode._labeledCenter_calculate_y != 0)
+        if(qnode._labeledCenter_calculate_y < 600 && qnode._labeledCenter_calculate_y != 0)
         {
             _190714_trakint_test1();
             break;
@@ -2336,11 +2336,11 @@ void qtros::MainWindow::_190714_trakint_test1()
 
     geometry_msgs::Pose target_pose;
 
-    point_enclosure_x = qnode._labeledCenter_calculate_x;
+    point_enclosure_x = qnode._labeledCenter_calculate_x - 40;
 
     target_pose.position.x = point_enclosure_x;
     target_pose.position.y = 0;
-    target_pose.position.z = 40;
+    target_pose.position.z = 49;
     double rotate_x = _task_roll*pi/180;
     double rotate_y = _task_pitch*pi/180;
     double rotate_z = _task_yaw*pi/180;
@@ -2402,6 +2402,7 @@ void qtros::MainWindow::_190714_trakint_test2()
     target_pose.position.x = point_enclosure_x;
     target_pose.position.y = 0;
     target_pose.position.z = 24;
+    //target_pose.position.z = 49;
     double rotate_x = _task_roll*pi/180;
     double rotate_y = _task_pitch*pi/180;
     double rotate_z = _task_yaw*pi/180;
@@ -2447,6 +2448,8 @@ void qtros::MainWindow::_190714_trakint_test2()
       ui.listWidget_Server_text->addItem(QString("%1").arg(Joint_data));
       ui.listWidget_Server_text->scrollToBottom();
 
+      //Gripper_Close();
+
       while(true)
       {
        if(complete_pose)
@@ -2479,7 +2482,7 @@ void qtros::MainWindow::_190714_trakint_test3()
     geometry_msgs::Pose target_pose;
     target_pose.position.x = point_enclosure_x;
     target_pose.position.y = 0;
-    target_pose.position.z = 40;
+    target_pose.position.z = 49;
     double rotate_x = _task_roll*pi/180;
     double rotate_y = _task_pitch*pi/180;
     double rotate_z = _task_yaw*pi/180;
