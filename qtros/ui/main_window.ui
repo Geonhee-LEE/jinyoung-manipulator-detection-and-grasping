@@ -44,7 +44,7 @@
         <item>
          <widget class="QTabWidget" name="tabWidget">
           <property name="currentIndex">
-           <number>1</number>
+           <number>2</number>
           </property>
           <widget class="QWidget" name="tab">
            <attribute name="title">
@@ -1536,7 +1536,7 @@
               </rect>
              </property>
              <property name="text">
-              <string>0</string>
+              <string>500</string>
              </property>
             </widget>
             <widget class="QLineEdit" name="txt_y_data_1">
@@ -1562,7 +1562,7 @@
               </rect>
              </property>
              <property name="text">
-              <string>0</string>
+              <string>500</string>
              </property>
             </widget>
             <widget class="QLineEdit" name="txt_R_data_1">
@@ -1575,7 +1575,7 @@
               </rect>
              </property>
              <property name="text">
-              <string>0</string>
+              <string>-180</string>
              </property>
             </widget>
             <widget class="QLineEdit" name="txt_P_data_1">
@@ -1588,7 +1588,7 @@
               </rect>
              </property>
              <property name="text">
-              <string>0</string>
+              <string>-90</string>
              </property>
             </widget>
             <widget class="QLineEdit" name="txt_yaw_data_1">
@@ -1601,7 +1601,7 @@
               </rect>
              </property>
              <property name="text">
-              <string>0</string>
+              <string>180</string>
              </property>
             </widget>
             <widget class="QLineEdit" name="txt_z_data_2">

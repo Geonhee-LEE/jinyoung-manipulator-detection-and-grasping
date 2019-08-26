@@ -184,13 +184,13 @@ private:
   double _CurrentCamera_P;
   double _CurrentCamera_Y;
 
-  double _task_roll = -94.46;
-  double _task_pitch = -75.67;
-  double _task_yaw = 94.46;
+  double _task_roll = -180;
+  double _task_pitch = -90;
+  double _task_yaw = 180;
 
-  double _task_sona_point_roll = -94.46;
-  double _task_sona_point_pitch = -75.67;
-  double _task_sona_point_yaw = 4.46;
+  double _task_sona_point_roll = 90;
+  double _task_sona_point_pitch = -90;
+  double _task_sona_point_yaw = 180;
 
   double point_enclosure_x;
 

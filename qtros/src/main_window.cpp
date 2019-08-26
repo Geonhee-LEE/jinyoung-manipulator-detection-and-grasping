@@ -2186,11 +2186,11 @@ void qtros::MainWindow::_190714_trakint_test()
 
     geometry_msgs::Pose target_pose;
 
-    point_enclosure_x = qnode._labeledCenter_calculate_x+10;
+    point_enclosure_x = qnode._labeledCenter_calculate_x;
 
-    target_pose.position.x = point_enclosure_x;
+    target_pose.position.x = 700;
     target_pose.position.y = 0;
-    target_pose.position.z = 160;
+    target_pose.position.z = 40;
     double rotate_x = _task_roll*pi/180;
     double rotate_y = _task_pitch*pi/180;
     double rotate_z = _task_yaw*pi/180;
@@ -2253,7 +2253,7 @@ void qtros::MainWindow::_190714_trakint_test()
 
     while (true) {
 
-        if(qnode._labeledCenter_calculate_y < 500)
+        if(qnode._labeledCenter_calculate_y < 500 && qnode._labeledCenter_calculate_y != 0)
         {
             _190714_trakint_test1();
             break;
@@ -2269,7 +2269,11 @@ void qtros::MainWindow::_190714_trakint_test()
         avg_velocity = avg_velocity + qnode.velocity_enclosure;
         vel_check_count++;
 
-        if(qnode._labeledCenter_calculate_y < (avg_velocity/vel_check_count) * 3.23)
+        //if(qnode._labeledCenter_calculate_y < (avg_velocity/vel_check_count) * 3.23)
+        //if(qnode._labeledCenter_calculate_y < (avg_velocity/vel_check_count) * 3.06)
+
+
+        if(qnode._labeledCenter_calculate_y < (qnode.velocity_enclosure) * 3.23)
         {
             _190714_trakint_test2();
             break;
@@ -2277,9 +2281,11 @@ void qtros::MainWindow::_190714_trakint_test()
 
     }
 
+
     _190714_trakint_test3();
     usleep(300000);
 
+    /*
     _190714_trakint_test_sona_500x300_point();
     usleep(300000);
 
@@ -2295,7 +2301,7 @@ void qtros::MainWindow::_190714_trakint_test()
     usleep(300000);
 
     _190714_trakint_test_sona_500x300_point();
-    usleep(1000000);
+    usleep(300000);
 
     _190714_trakint_test_sona_700x300_point();
     usleep(300000);
@@ -2321,6 +2327,8 @@ void qtros::MainWindow::_190714_trakint_test()
 
     _190714_trakint_test3();
     usleep(300000);
+
+    */
 }
 
 void qtros::MainWindow::_190714_trakint_test1()
@@ -2328,11 +2336,11 @@ void qtros::MainWindow::_190714_trakint_test1()
 
     geometry_msgs::Pose target_pose;
 
-    point_enclosure_x = qnode._labeledCenter_calculate_x+15;
+    point_enclosure_x = qnode._labeledCenter_calculate_x;
 
     target_pose.position.x = point_enclosure_x;
     target_pose.position.y = 0;
-    target_pose.position.z = 160;
+    target_pose.position.z = 40;
     double rotate_x = _task_roll*pi/180;
     double rotate_y = _task_pitch*pi/180;
     double rotate_z = _task_yaw*pi/180;
@@ -2393,7 +2401,7 @@ void qtros::MainWindow::_190714_trakint_test2()
     geometry_msgs::Pose target_pose;
     target_pose.position.x = point_enclosure_x;
     target_pose.position.y = 0;
-    target_pose.position.z = 138;
+    target_pose.position.z = 24;
     double rotate_x = _task_roll*pi/180;
     double rotate_y = _task_pitch*pi/180;
     double rotate_z = _task_yaw*pi/180;
@@ -2450,6 +2458,7 @@ void qtros::MainWindow::_190714_trakint_test2()
       complete_pose = false;
 
       Gripper_Close();
+
       double robot_move_time_stop = ros::Time::now().toSec();
 
       ros::Duration(1).sleep();
@@ -2470,7 +2479,7 @@ void qtros::MainWindow::_190714_trakint_test3()
     geometry_msgs::Pose target_pose;
     target_pose.position.x = point_enclosure_x;
     target_pose.position.y = 0;
-    target_pose.position.z = 300;
+    target_pose.position.z = 40;
     double rotate_x = _task_roll*pi/180;
     double rotate_y = _task_pitch*pi/180;
     double rotate_z = _task_yaw*pi/180;
