@@ -2253,7 +2253,7 @@ void qtros::MainWindow::_190714_trakint_test()
 
     while (true) {
 
-        if(qnode._labeledCenter_calculate_y < 600 && qnode._labeledCenter_calculate_y != 0)
+        if(qnode._labeledCenter_calculate_y < 650 && qnode._labeledCenter_calculate_y != 0)
         {
             _190714_trakint_test1();
             break;
@@ -2273,7 +2273,7 @@ void qtros::MainWindow::_190714_trakint_test()
         //if(qnode._labeledCenter_calculate_y < (avg_velocity/vel_check_count) * 3.06)
 
 
-        if(qnode._labeledCenter_calculate_y < (qnode.velocity_enclosure) * 3.23)
+        if(qnode._labeledCenter_calculate_y < (qnode.velocity_enclosure) * 2.515)
         {
             _190714_trakint_test2();
             break;
@@ -2281,11 +2281,12 @@ void qtros::MainWindow::_190714_trakint_test()
 
     }
 
-
     _190714_trakint_test3();
     usleep(300000);
 
-    /*
+    _190714_trakint_test4();
+    usleep(300000);
+
     _190714_trakint_test_sona_500x300_point();
     usleep(300000);
 
@@ -2317,10 +2318,12 @@ void qtros::MainWindow::_190714_trakint_test()
     _190714_trakint_test_sona_500x300_point();
     usleep(300000);
 
+    _190714_trakint_test4();
+    usleep(300000);
+
     _190714_trakint_test3();
     usleep(300000);
 
-    _190714_trakint_test4();
     usleep(10000);
     Gripper_Open();
     usleep(10000);
@@ -2328,7 +2331,7 @@ void qtros::MainWindow::_190714_trakint_test()
     _190714_trakint_test3();
     usleep(300000);
 
-    */
+
 }
 
 void qtros::MainWindow::_190714_trakint_test1()
@@ -2336,11 +2339,11 @@ void qtros::MainWindow::_190714_trakint_test1()
 
     geometry_msgs::Pose target_pose;
 
-    point_enclosure_x = qnode._labeledCenter_calculate_x - 40;
+    point_enclosure_x = qnode._labeledCenter_calculate_x - 47;
 
     target_pose.position.x = point_enclosure_x;
     target_pose.position.y = 0;
-    target_pose.position.z = 49;
+    target_pose.position.z = 30;
     double rotate_x = _task_roll*pi/180;
     double rotate_y = _task_pitch*pi/180;
     double rotate_z = _task_yaw*pi/180;
@@ -2401,7 +2404,7 @@ void qtros::MainWindow::_190714_trakint_test2()
     geometry_msgs::Pose target_pose;
     target_pose.position.x = point_enclosure_x;
     target_pose.position.y = 0;
-    target_pose.position.z = 24;
+    target_pose.position.z = 13;
     //target_pose.position.z = 49;
     double rotate_x = _task_roll*pi/180;
     double rotate_y = _task_pitch*pi/180;
@@ -2482,7 +2485,7 @@ void qtros::MainWindow::_190714_trakint_test3()
     geometry_msgs::Pose target_pose;
     target_pose.position.x = point_enclosure_x;
     target_pose.position.y = 0;
-    target_pose.position.z = 49;
+    target_pose.position.z = 30;
     double rotate_x = _task_roll*pi/180;
     double rotate_y = _task_pitch*pi/180;
     double rotate_z = _task_yaw*pi/180;
@@ -2543,9 +2546,9 @@ void qtros::MainWindow::_190714_trakint_test4()
 {
 
     geometry_msgs::Pose target_pose;
-    target_pose.position.x = point_enclosure_x;
+    target_pose.position.x = 500;
     target_pose.position.y = 0;
-    target_pose.position.z = 150;
+    target_pose.position.z = 250;
     double rotate_x = _task_roll*pi/180;
     double rotate_y = _task_pitch*pi/180;
     double rotate_z = _task_yaw*pi/180;
@@ -2608,9 +2611,9 @@ void qtros::MainWindow::_190714_trakint_test_sona_500x300_point()
 
     geometry_msgs::Pose target_pose;
 
-    target_pose.position.x = 0;
+    target_pose.position.x = -150;
     target_pose.position.y = -500;
-    target_pose.position.z = 300;
+    target_pose.position.z = 250;
     double rotate_x = _task_sona_point_roll*pi/180;
     double rotate_y = _task_sona_point_pitch*pi/180;
     double rotate_z = _task_sona_point_yaw*pi/180;
@@ -2669,9 +2672,9 @@ void qtros::MainWindow::_190714_trakint_test_sona_700x300_point()
 
     geometry_msgs::Pose target_pose;
 
-    target_pose.position.x = 0;
-    target_pose.position.y = -700;
-    target_pose.position.z = 300;
+    target_pose.position.x = -150;
+    target_pose.position.y = -950;
+    target_pose.position.z = 250;
     double rotate_x = _task_sona_point_roll*pi/180;
     double rotate_y = _task_sona_point_pitch*pi/180;
     double rotate_z = _task_sona_point_yaw*pi/180;
@@ -2730,9 +2733,9 @@ void qtros::MainWindow::_190714_trakint_test_sona_700x200_point()
 
     geometry_msgs::Pose target_pose;
 
-    target_pose.position.x = 0;
-    target_pose.position.y = -700;
-    target_pose.position.z = 200;
+    target_pose.position.x = -150;
+    target_pose.position.y = -950;
+    target_pose.position.z = 180;
     double rotate_x = _task_sona_point_roll*pi/180;
     double rotate_y = _task_sona_point_pitch*pi/180;
     double rotate_z = _task_sona_point_yaw*pi/180;
