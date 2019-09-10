@@ -1248,7 +1248,7 @@ geometry_msgs::Vector3 qtros::MainWindow::Quaternion_to_RPY(geometry_msgs::PoseS
 geometry_msgs::Vector3 qtros::MainWindow::Quaternion_to_RPY()
 {
     // Get pose & orientation
-    qnode.move_group->setEndEffectorLink("gripper");
+    qnode.move_group->setEndEffectorLink("gripper");ckdzwjeh ???
     geometry_msgs::PoseStamped current_pose =    qnode.move_group->getCurrentPose();
 
     // the incoming geometry_msgs::Quaternion is transformed to a tf::Quaterion

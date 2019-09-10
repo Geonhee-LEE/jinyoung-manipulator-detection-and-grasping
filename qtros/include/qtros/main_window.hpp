@@ -78,6 +78,11 @@ public:
   void _190714_trakint_test_sona_700x300_point();
   void _190714_trakint_test_sona_700x200_point();
 
+  void _task_function();
+  void _task_test();
+  void _inverse_Moveit(double x_point, double y_point, double z_point, double roll, double pitch, double yaw);
+  void _inverse_point(double x_point, double y_point, double z_point, double roll, double pitch, double yaw);
+
   geometry_msgs::Vector3 Quaternion_to_RPY();
   geometry_msgs::Vector3 Quaternion_to_RPY(geometry_msgs::PoseStamped current_pose, tf::Quaternion quat);
   tf::Quaternion RPY_to_Quaternion(double rotate_x, double rotate_y, double rotate_z);
