@@ -674,7 +674,7 @@ void qtros::MainWindow::on_btnSendtoRobot_clicked()
 void qtros::MainWindow::on_btntest_clicked() //here test
 {
     //boost::thread th3(boost::bind(&MainWindow::task_moveit_funtion, this));
-  _task_moveit_test();
+  _task_moveit_function();
 }
 
 
@@ -999,7 +999,7 @@ tf::Quaternion qtros::MainWindow::RPY_to_Quaternion(double rotate_x, double rota
 void qtros::MainWindow::SonaMalding_Start()
 {
     QString msg = "SonaMalding Start!";
-    tcpSocket->write(QString("SonaMalding_Start\n").toLocal8Bit().constData());
+    tcpSocket->write(QString("SONA_ON\n").toLocal8Bit().constData());
     ui.listWidget_Server_text->addItem(QString("%1").arg(msg));
     ui.listWidget_Server_text->scrollToBottom();
 }
@@ -1008,7 +1008,7 @@ void qtros::MainWindow::SonaMalding_Start()
 void qtros::MainWindow::SonaMalding_Stop()
 {
     QString msg = "SonaMalding Stop!";
-    tcpSocket->write(QString("SonaMalding_Stop\n").toLocal8Bit().constData());
+    tcpSocket->write(QString("SONA_OFF\n").toLocal8Bit().constData());
     ui.listWidget_Server_text->addItem(QString("%1").arg(msg));
     ui.listWidget_Server_text->scrollToBottom();
 }
@@ -1583,6 +1583,17 @@ void qtros::MainWindow::on_btnGPIO_ON_clicked()
 {
   Gripper_Open();
 }
+
+void qtros::MainWindow::on_btnSONA_OFF_clicked()
+{
+  SonaMalding_Stop();
+}
+
+void qtros::MainWindow::on_btnSONA_ON_clicked()
+{
+  SonaMalding_Start();
+}
+
 
 
 void qtros::MainWindow::Check_pixel()//run only once.
@@ -2192,13 +2203,13 @@ void qtros::MainWindow::_task_function()
                 if(grip == 0)
                 {
                     ROS_INFO("Gripper_Open");
-                    //Gripper_Open();
+                    Gripper_Open();
                     ros::Duration(1).sleep();
                 }
                 else if(grip == 1)
                 {
                     ROS_INFO("Gripper_Close");
-                    //Gripper_Close();
+                    Gripper_Close();
                     ros::Duration(1).sleep();
                 }
 

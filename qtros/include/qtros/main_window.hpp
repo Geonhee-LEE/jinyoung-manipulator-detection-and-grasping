@@ -151,6 +151,8 @@ public:
     void on_btn_fk_clicked();
     void on_btn_get_joint_clicked();
     void on_btn_get_orientation_clicked();
+    void on_btnSONA_OFF_clicked();
+    void on_btnSONA_ON_clicked();
 
 private:
 	Ui::MainWindowDesign ui;
