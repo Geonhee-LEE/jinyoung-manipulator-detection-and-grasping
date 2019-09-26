@@ -59,6 +59,9 @@ public:
 
   void Gripper_Open();
   void Gripper_Close();
+
+  void SonaMalding_Start();
+  void SonaMalding_Stop();
   void pick_and_place_task();
 
   void inverse_and_move(double position_x,double position_y,double position_z,double orientation_r,double orientation_p,double orientation_y);
@@ -79,7 +82,11 @@ public:
   void _190714_trakint_test_sona_700x200_point();
 
   void _task_function();
+  void _task_moveit_function();
+
   void _task_test();
+  void _task_moveit_test();
+
   void _inverse_Moveit(double x_point, double y_point, double z_point, double roll, double pitch, double yaw);
   void _inverse_point(double x_point, double y_point, double z_point, double roll, double pitch, double yaw);
 
@@ -142,7 +149,8 @@ public:
     void on_btnRepeat_clicked();
     void on_btn_test_move_clicked();
     void on_btn_fk_clicked();
-
+    void on_btn_get_joint_clicked();
+    void on_btn_get_orientation_clicked();
 
 private:
 	Ui::MainWindowDesign ui;
