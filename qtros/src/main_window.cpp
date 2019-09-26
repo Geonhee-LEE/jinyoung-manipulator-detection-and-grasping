@@ -2113,20 +2113,21 @@ void qtros::MainWindow::_task_function()
                 double y_point = split_comma.at(8).toDouble();
                 double position_x = 0;
 
-                if(srr1 == "E")
-                {
-                    point_enclosure_x = qnode._labeledCenter_calculate_x + offset_x;
-                    position_x = point_enclosure_x;
-                }
-                else
-                {
-                    position_x = split_comma.at(1).toDouble();
-                }
 
                 while (true) {
 
                     if(qnode._labeledCenter_calculate_y < y_point)
                     {
+                        if(srr1 == "E")
+                        {
+                            point_enclosure_x = qnode._labeledCenter_calculate_x + offset_x;
+                            position_x = point_enclosure_x;
+                        }
+                        else
+                        {
+                            position_x = split_comma.at(1).toDouble();
+                        }
+
                         _inverse_point(position_x, position_y, position_z, orientation_x, orientation_y, orientation_z);
                         break;
                     }
@@ -2310,21 +2311,22 @@ void qtros::MainWindow::_task_moveit_function()
                 double y_point = split_comma.at(8).toDouble();
                 double position_x = 0;
 
-                if(srr1 == "E")
-                {
-                    point_enclosure_x = qnode._labeledCenter_calculate_x + offset_x;
-                    position_x = point_enclosure_x;
-                }
-                else
-                {
-                    position_x = split_comma.at(1).toDouble();
-                }
-
                 while (true) {
 
                     if(qnode._labeledCenter_calculate_y < y_point)
                     {
+                        if(srr1 == "E")
+                        {
+                            point_enclosure_x = qnode._labeledCenter_calculate_x + offset_x;
+                            position_x = point_enclosure_x;
+                        }
+                        else
+                        {
+                            position_x = split_comma.at(1).toDouble();
+                        }
+
                         _inverse_Moveit(position_x, position_y, position_z, orientation_x, orientation_y, orientation_z);
+
                         break;
                     }
 
