@@ -19,11 +19,14 @@
  <pre><code> 
 sudo apt-get install ros-kinetic-tf2-geometry-msgs ros-kinetic-find-object-2d ros-kinetic-moveit* ros-kinetic-qt-build ros-kinetic-map-server ros-kinetic-move-base  ros-kinetic-rviz-visual-tools ros-kinetic-interactive-markers   ros-kinetic-qt-ros -y  </pre></code>
 
+# Video
+
+[![Video Label](http://img.youtube.com/vi/28bw5-Dy1SA/0.jpg)](https://www.youtube.com/watch?v=28bw5-Dy1SA) 
 
 
 -------------
 
-# How to run the functions of 'manipulator'
+# How to run the functions for 'manipulator'
 
 1.  Run the moveIt! and RViz
 
