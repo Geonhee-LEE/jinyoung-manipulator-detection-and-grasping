@@ -20,6 +20,8 @@
 sudo apt-get install ros-kinetic-tf2-geometry-msgs ros-kinetic-find-object-2d ros-kinetic-moveit* ros-kinetic-qt-build ros-kinetic-map-server ros-kinetic-move-base  ros-kinetic-rviz-visual-tools ros-kinetic-interactive-markers   ros-kinetic-qt-ros -y  </pre></code>
 
 # Video
+- Object detection is developed using opencv3, which is implemeted in [object-detection-opencv3-ros](https://github.com/Geonhee-LEE/object-detection-opencv3-ros)
+
 
 [![Video Label](http://img.youtube.com/vi/28bw5-Dy1SA/0.jpg)](https://www.youtube.com/watch?v=28bw5-Dy1SA) 
 
